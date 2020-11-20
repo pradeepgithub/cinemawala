@@ -1,0 +1,37 @@
+db.createCollection("movies_crew", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: [ "movie_id", "user_id", "member_type", "status"],
+         properties: {
+            title: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+           
+            description: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            rating: {
+               enum: [ "G", "PG", "PG-13", "R", "NC-17", null],
+               description: "can only be one of the enum values if the field exists"
+            },   
+              length: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+              cost: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+              language: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            }
+           
+         }
+      }
+   }
+})
+

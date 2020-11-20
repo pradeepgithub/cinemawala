@@ -1,0 +1,80 @@
+db.createCollection("cinephile", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: [ "first_name", "last_name", "email", "mobile_phone", "birthyear", "password" ],
+         properties: {
+            first_name: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            last_name: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            email: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            password: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+
+            registration_date: {
+               bsonType: "ISODate",
+               description: "must be a date if the field exists"
+            },
+
+            profile_pic: {
+               bsonType: "string",
+               description: "must be a string if the field exists"
+            },
+            mobile_phone: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            mobile_phone_other: {
+               bsonType: "string",
+               description: "must be a string if the field exists"
+            },
+            birthyear: {
+               bsonType: "int",
+               minimum: 2005,
+               maximum: 3017,
+               description: "must be an integer in [ 2017, 3017 ] and is required"
+            },
+             gender: {
+               enum: [ "Male", "Female", "Other", null],
+               description: "can only be one of the enum values if the field exists"
+            },     
+            address: {
+                        bsonType: "object",
+                        required: [ "city" ],
+                        properties: {
+                            street: {
+                                bsonType: "string",
+                                description: "must be a string if the field exists"
+                            },
+                            city: {
+                                bsonType: "string",
+                                description: "must be a string and is required"
+                            },
+                            state_province: {
+                                bsonType: "string",
+                                description: "must be a string if the field exists"
+                            },
+                            postal_code: {
+                                bsonType: "string",
+                                description: "must be a string if the field exists"
+                            },
+                            country_code: {
+                                bsonType: "string",
+                                description: "must be a string if the field exists"
+                            }
+                        }
+            }
+         }
+      }
+   }
+})

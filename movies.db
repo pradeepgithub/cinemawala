@@ -1,0 +1,69 @@
+db.createCollection("movies", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: [ "title", "description", "release_year", "language", "length", "cost", "rating"],
+         properties: {
+            title: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+           
+            description: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            rating: {
+               enum: [ "G", "PG", "PG-13", "R", "NC-17", null],
+               description: "can only be one of the enum values if the field exists"
+            },   
+              length: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+              cost: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+              language: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            type: {
+               enum: [ "Short Movie", "Movie", "Documentory", null],
+               description: "can only be one of the enum values if the field exists"
+            },
+            poster: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },   
+             plot: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },   
+              fullplot: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },   
+             directors: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },  
+           
+           genres: {
+              
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+
+           released: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            }    
+            
+           
+         }
+      }
+   }
+})
+
