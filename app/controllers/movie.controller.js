@@ -1,4 +1,5 @@
 const config = require("../config/auth.config");
+const { user } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Movie = db.movie;
@@ -22,22 +23,42 @@ exports.findAll = (req, res) => {
 
   exports.saveMovie = (req, res) => {
 
+   
+
+      User.findOne(req.params.username)
+      .exec(function(err, doc){
+        if(err || doc === null){
+         // res.status(404).json({error: 'PersonNotFound'});
+        } else {
+         //movie.added_by =  doc._id;
+       
+      
+      
+      console.log(doc._id);
+      //  movie.added_by = doc.map(username => doc._id);
+      }
+    });
+
     const movie = new Movie({
-        title: req.body.title,
-        description: req.body.description,
-        rating:req.body.rating,
-        length: req.body.length,
-        cost: req.body.cost,
-        language:req.body.language,
-        type:req.body.type,
-        poster: req.body.poster,
-        plot: req.body.plot,
-        fullplot: req.body.fullplot,
-        directors: req.body.directors,
-        genres: req.body.genres,
-        released: req.body.released
-      });
-    
+      title: req.body.title,
+      storyline: req.body.storyline,
+      rating:req.body.rating,
+      length: req.body.length,
+      country:req.body.country,
+      actors: req.body.actors,
+      screened_festival:req.body.screened_festival,
+      awards: req.body.awards,
+      cost: req.body.cost,
+      language:req.body.language,
+      type:req.body.type,
+      poster: req.body.poster,
+      directors: req.body.directors,
+      genres: req.body.genres,
+      released: req.body.released,
+      movie_url:req.body.movie_url,
+      added_by:req.body.username
+
+    });
       movie.save((err, movie) => {
         if (err) {
           res.status(500).send({ message: err });

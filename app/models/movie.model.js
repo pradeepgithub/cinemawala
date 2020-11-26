@@ -5,18 +5,30 @@ const Movie = mongoose.model(
   new mongoose.Schema
         ({
                 title: String,
-                description: String,
-                rating:String,
+                // added_by: [
+                //         {
+                //           type: mongoose.Schema.Types.ObjectId,
+                //           ref: "User"
+                //         }
+                //       ],
+                added_by:String,
+                released: String,
                 length: String,
-                cost: String,
+                storyline: String,
                 language:String,
-                type:String,
-                poster: String,
-                plot: String,
-                fullplot: String,
+                country:String,
+                actors: String,
+                screened_festival: String,
+                awards:String,
+                cost: String,
                 directors: String,
                 genres: String,
-                released: String
+                rating:String,
+                poster: String,
+                movie_url: String,
+                type:String 
+                 
+               
         })
 );
 

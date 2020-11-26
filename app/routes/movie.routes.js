@@ -12,6 +12,6 @@ module.exports = function(app) {
 
   app.get("/api/movie/all", moviecontroller.findAll);
 
- app.post("/api/movie/save",  moviecontroller.saveMovie);
- //[authJwt.verifyToken],
+ app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
+ //
 }
