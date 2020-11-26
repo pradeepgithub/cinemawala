@@ -12,6 +12,7 @@ module.exports = function(app) {
   });
 
 
+  
   app.get("/api/user/otp", otpcontroller.sendOTP);
   app.get("/api/user/verifyotp", otpcontroller.verifyOTP);
 
@@ -20,6 +21,7 @@ module.exports = function(app) {
   app.get("/api/test/all", controller.allAccess);
 
   app.get("/api/test/user", [authJwt.verifyToken], controller.userBoard);
+  app.post("/api/user/changepassword", [authJwt.verifyToken], controller.changepassword);
 
   app.get(
     "/api/test/mod",

@@ -1,8 +1,22 @@
 const config = require("../config/auth.config");
 const db = require("../models");
+const nodemailer = require('nodemailer');
+var bcrypt = require("bcryptjs");
+
 const User = db.user;
 const Role = db.role;
 
+
+
+let transport = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  service: 'gmail', 
+  port: 2525,
+  auth: {
+     user: 'pradeep.verma@webhungers.com',
+     pass: 'Pradeep.WH'
+  }
+});
 
 
 exports.allAccess = (req, res) => {
@@ -57,3 +71,29 @@ exports.findAll = (req, res) => {
     });
 };
 
+
+exports.changepassword = (req, res) => {
+  User.findOne(req.params.username)
+  .select('first_name last_name gender mobile_number country username email')
+  .exec(function(err, doc){
+    if(err || doc === null){
+      res.status(404).json({error: 'PersonNotFound'});
+    } else {
+     
+      var userToUpdate = req.body.username;
+      var passToUpdate = bcrypt.hashSync(req.body.password, 8)
+
+        User.updateOne({ username: userToUpdate}, {$set: {password: passToUpdate} }, function (err, result) {
+                      if(err || result === null)
+                      {
+                      res.send("Nothing updated");
+                      }else
+                      {
+                        res.send("Password Updated");
+                      }
+      
+                      });
+    }
+});
+ 
+};
