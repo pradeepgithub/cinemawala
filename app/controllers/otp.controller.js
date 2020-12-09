@@ -13,8 +13,8 @@ let transport = nodemailer.createTransport({
   service: 'gmail', 
   port: 2525,
   auth: {
-     user: 'pradeep.verma@webhungers.com',
-     pass: 'Pradeep.WH'
+    user: 'pradeep.invite@gmail.com.com',
+    pass: '@dwitiya123'
   }
 });
 

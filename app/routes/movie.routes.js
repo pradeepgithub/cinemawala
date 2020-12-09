@@ -11,7 +11,10 @@ module.exports = function(app) {
   });
 
   app.get("/api/movie/all", moviecontroller.findAll);
-
- app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
+  app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
+  app.get("/api/movie/details", moviecontroller.findOneById);
+  app.post("/api/movie/updatemoviecrew", moviecontroller.addMovieCrew);
+  app.post("/api/movie/addmoviecrew", moviecontroller.addMovieCrew);
+  app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
  //
 }

@@ -5,14 +5,8 @@ const Movie = mongoose.model(
   new mongoose.Schema
         ({
                 title: String,
-                // added_by: [
-                //         {
-                //           type: mongoose.Schema.Types.ObjectId,
-                //           ref: "User"
-                //         }
-                //       ],
                 added_by:String,
-                released: String,
+                released: Number,
                 length: String,
                 storyline: String,
                 language:String,
@@ -26,7 +20,14 @@ const Movie = mongoose.model(
                 rating:String,
                 poster: String,
                 movie_url: String,
-                type:String 
+                type:String,
+                crew:
+                {
+                name: String,
+                role: String,
+                email: String
+                 }
+                 
                  
                
         })

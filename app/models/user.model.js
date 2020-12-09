@@ -11,7 +11,9 @@ const User = mongoose.model(
     country: String,
     mobile_number:String,
     gender:String,
+    year_of_birth:String,
     mob_verified:String,
+    pin: String,
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,

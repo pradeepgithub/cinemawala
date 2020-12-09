@@ -9,6 +9,7 @@ db.user = require("./user.model");
 db.role = require("./role.model");
 db.otp = require("./otp.model");
 db.movie = require("./movie.model");
+db.friend = require("./friends.model");
 
 db.ROLES = ["user", "admin", "moderator", "maker"];
 

@@ -7,7 +7,7 @@ const Crew = mongoose.model(
                 name: String,
                 role: String,
                 email: String,
-               
+               movie_id: String
                
         })
 );
