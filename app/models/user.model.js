@@ -14,12 +14,17 @@ const User = mongoose.model(
     year_of_birth:String,
     mob_verified:String,
     pin: String,
+    street:String,
+    city:String,
+    state:String,
+    fav_genre:String,
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role"
       }
-    ]
+    ],
+
   })
 );
 

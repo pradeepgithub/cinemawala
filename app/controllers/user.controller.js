@@ -8,8 +8,6 @@ const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
 
-
-
 let transport = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   service: 'gmail', 
@@ -19,30 +17,6 @@ let transport = nodemailer.createTransport({
      pass: '@dwitiya123'
   }
 });
-
-
-exports.allAccess = (req, res) => {
-    res.status(200).send("Public Content.");
-  };
-  
-  exports.userBoard = (req, res) => {
-    res.status(200).send("User Content.");
-  };
-  
-  exports.makerBoard = (req, res) => {
-    res.status(200).send("Cinemaker Content.");
-  };
-  
-  exports.adminBoard = (req, res) => {
-    res.status(200).send("Admin Content.");
-  };
-  
-  exports.moderatorBoard = (req, res) => {
-    res.status(200).send("Moderator Content.");
-  };
-  
-
-
 
 exports.showProfile = (req, res) => {
   User.findOne(req.params.username)
@@ -56,6 +30,42 @@ exports.showProfile = (req, res) => {
 });
  
 };
+
+
+exports.completeProfile = (req, res) => {
+  
+    first_name= req.body.first_name,
+    last_name=req.body.last_name,
+    user_id=req.body.user_id,
+    country= req.body.country,
+    email= req.body.email,
+    year_of_birth=req.body.year_of_birth,
+    mobile_number= req.body.mobile_number,
+    gender= req.body.gender,
+    street= req.body.street,
+    city= req.body.city,
+    state= req.body.state,
+    pin= req.body.pin
+    fav_genre=req.body.fav_genre;
+
+    User.updateOne({_id: user_id}, {$set: {first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
+      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre   }}).then(data => {
+        console.log(user_id);
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
+    
+  
+
+
+  
+};
+
 
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
@@ -76,8 +86,6 @@ exports.findAll = (req, res) => {
 
 exports.listAll = (req, res) => {
   
-  //var condition = first_name ? { first_name: { $regex: new RegExp(first_name), $options: "i" } } : {};
-
   User.find()
     .then(data => {
       res.send(data);
@@ -119,10 +127,10 @@ exports.changepassword = (req, res) => {
 
 exports.sendFriendInvite = (req, res) => {
 
-  const fid= req.body.firend_id;
+  const fid= req.body.friend_id;
 
   User.findOne({_id:fid})
-  .select('username first_name last_name, email, country, mobile_number, gender, year_of_birth, pin')
+  
   .exec(function(err, doc){
     if(err || doc === null){
       res.status(404).json({error: 'PersonNotFound'});
@@ -131,9 +139,10 @@ exports.sendFriendInvite = (req, res) => {
 
 const invite = new Friend({
   user_id: req.body.user_id,
-  firend_id: req.body.firend_id,
+  friend_id: req.body.friend_id,
   username:doc.username,
-  mobile_number: doc.mobile_number,
+  sender_mobile_number: req.body.sender_mobile_number,
+  rec_mobile_number: doc.mobile_number,
   email: doc.email,
   status: req.body.status
   
@@ -142,7 +151,7 @@ const invite = new Friend({
 const message = {
   from: 'pradeep.invite@gmail.com', // Sender address
   to: req.body.email,         // recipients
-  subject: 'Friends Invite', // Subject line
+  subject: 'friend Invite', // Subject line
   text: "Message for Invite" // Plain text body
 };
 
@@ -169,21 +178,40 @@ invite.save((err, invite) => {
   }});
 };
 
-
-
 exports.showFriendInvite = (req, res) => {
-  
-    // user_id: req.body.user_id,
-    // mobile_number: req.body.mobile_number,
-    const user_id = req.body.user_id;
-    const mobile_number = req.body.mobile_number;
- 
-console.log(user_id);
+  //Sent Invite by me
+//   const user_id = req.body.user_id;
+//   const mobile_number = req.body.mobile_number;
+//   console.log(user_id);
+//   Friend.aggregate([
+//     {$match : {user_id : user_id}},
+//     {$lookup: {from: "users", localField: "email", foreignField: "email", as: "users"}},]
 
-    Friend.find({
-  $or: [{ user_id: user_id }]
-})
-  .then(data => {
+// ) .then(data => {
+//     console.log(user_id);
+//     res.send(data);
+//   })
+//   .catch(err => {
+//     res.status(500).send({
+//       message:
+//         err.message || "Some error occurred while retrieving Users."
+//     });
+//   });
+
+const sender_mobile_number = req.body.sender_mobile_number;
+
+
+Friend.aggregate(
+  
+  [
+     {$match : {sender_mobile_number :  sender_mobile_number }},
+     {$lookup: {from: "users", localField: "rec_mobile_number", foreignField: "mobile_number", as: "users"}},
+     
+    
+    ]
+
+  ).then(data => {
+   // console.log(user_id);
     res.send(data);
   })
   .catch(err => {
@@ -197,54 +225,28 @@ console.log(user_id);
   
   
 exports.showRecievedInvite = (req, res) => {
-  
-  // user_id: req.body.user_id,
-  // mobile_number: req.body.mobile_number,
-  const user_id = req.body.user_id;
-  const mobile_number = req.body.mobile_number;
 
-console.log(user_id);
+  //invite recieved by me
+  const rec_mobile_number = req.body.rec_mobile_number;
 
-  Friend.find({
-$or: [{ firend_id: user_id }]
-})
-.then(data => {
-  res.send(data);
-})
-.catch(err => {
-  res.status(500).send({
-    message:
-      err.message || "Some error occurred while retrieving Users."
+Friend.aggregate(
+    [
+     {$match : {rec_mobile_number :  rec_mobile_number }},
+     {$lookup: {from: "users", localField: "sender_mobile_number", foreignField: "mobile_number", as: "users"}},
+    ]
+  ).then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
   });
-});
+ 
+
 
 };
-
-
-
-exports.showFriends1 = (req, res) => {
-  
-  // user_id: req.body.user_id,
-  // mobile_number: req.body.mobile_number,
-  const user_id = req.body.user_id;
-  const mobile_number = req.body.mobile_number;
-
-console.log(user_id);
-  Friend.find({
-$or: [{ user_id: user_id }, { firend_id: user_id }]
-})
-.then(data => {
-  res.send(data);
-})
-.catch(err => {
-  res.status(500).send({
-    message:
-      err.message || "Some error occurred while retrieving Users."
-  });
-});
-
-};
-
 
 
 
@@ -252,43 +254,27 @@ exports.showFriends = (req, res) => {
   
   const user_id = req.body.user_id;
   const mobile_number = req.body.mobile_number;
-
-  
 var arr = [];
 
 Friend.find({
  
-  $or: [{ user_id: user_id }]
+  $or: [{ friend_id: user_id }, { user_id: user_id }], status:1
   }, {}).then(data => {
     data.forEach(element => {
-      console.log(element.firend_id);
-      console.log(element.status);
-      if(element.firend_id !=="")
+      if(element.friend_id !=="")
       {
-        arr.push(element.firend_id);
+        arr.push(element.friend_id);
       }
-      
-     
-
-
-
-
     });
 
     User.find({_id:{$in:arr}})
-    // .select('username first_name last_name, email, country, mobile_number, gender, year_of_birth, pin')
     .exec(function(err, doc){
       if(err || doc === null){
         res.status(404).json({error: 'PersonNotFound'});
       } else {
-console.log(doc);
-res.send(doc);
+        res.send(doc);
       }
     });
-
-
- // res.send(data);
-
 })
 .catch(err => {
   res.status(500).send({
@@ -297,5 +283,30 @@ res.send(doc);
   });
 });
 
-
 }
+
+
+exports.acceptRejectFriendsInvite = (req, res) => {
+ 
+  var status =req.body.status;
+  var invite_id =req.body.friendsInvite_id;
+
+ 
+  Friend.update({ _id: invite_id},{$set: {status: status}})
+   .then(data => {
+   
+           res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+  
+
+};
+
+
+

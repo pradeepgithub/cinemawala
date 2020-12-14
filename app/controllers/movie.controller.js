@@ -3,8 +3,9 @@ const { user } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Movie = db.movie;
+const ScheduledMovie = db.scheduledmovie;
 
-// Retrieve all Tutorials from the database.
+
 exports.findAll = (req, res) => {
     const movie_name = req.query.movie_name;
     var condition = movie_name ? { movie_name: { $regex: new RegExp(movie_name), $options: "i" } } : {};
@@ -22,7 +23,6 @@ exports.findAll = (req, res) => {
   };
 
 
-  // Retrieve all Tutorials from the database.
 exports.findAllByFilter = (req, res) => {
 
   const title = req.body.title;// ? req.body.title : "";
@@ -89,7 +89,6 @@ exports.findAllByFilter = (req, res) => {
 };
 
 
-// Retrieve all Tutorials from the database.
 exports.findOneById = (req, res) => {
 
   const id = req.body.id;// ? req.body.title : "";
@@ -206,3 +205,227 @@ exports.addMovieCrew = (req, res) => {
     });
   });
 };
+
+
+
+
+exports.listMoviesSpecial = (req, res) => {
+
+  //Note: We need to calculate tranding movie
+  const criteria = req.body.criteria;//? req.body.actors : "";
+  var number_movies = req.body.number_movies;//? req.body.festival: "";
+  if(number_movies == "")
+  {
+    number_movies=100;
+  }
+
+  if(criteria == "Recent")
+  {
+  Movie.find({}).sort({$natural:-1}).limit(number_movies)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  }
+  else if(criteria == "Trending")
+  {
+    Movie.find({}).sort({$natural:1}).limit(number_movies)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  }
+  else{
+    Movie.aggregate([{ $sample: { size: number_movies } }])
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  }
+ 
+
+};
+
+
+exports.addFriendsToScheduleMovie = (req, res) => {
+
+  ScheduledMovie.update({_id: req.body.scheduled_id}, {"$push": {
+    "scheduled_with":{
+      "friend_name":req.body.friend_name,
+      "friend_id":req.body.friend_id,
+      "status":0
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while scheduling users."
+    });
+  });
+};
+
+exports.addScheduleMovie = (req, res) => {
+
+
+const schedule = new ScheduledMovie({
+  title: req.body.title,
+  scheduled_by:req.body.scheduled_by,
+  scheduled_date: req.body.scheduled_date,
+  scheduled_time: req.body.scheduled_time,
+  scheduled_with:[{
+    friend_name:req.body.friend_name,
+    friend_id:req.body.friend_id,
+    status:0
+  }]
+
+});
+schedule.save((err, schedule) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+    res.status(200).send({ message: schedule });
+    });
+
+};
+
+
+
+exports.reScheduleMovie = (req, res) => {
+
+  // ({_id: {$elemMatch:{dname:"Ramesh Shippy", sal:"5000"}}}).pretty(); 
+  //var title = req.body.title;
+ // var scheduled_by=req.body.scheduled_by;
+  var scheduled_date= req.body.scheduled_date;
+  var scheduled_time= req.body.scheduled_time; 
+  var movieschedule_id = req.body.movieschedule_id;
+  
+  ScheduledMovie.update({_id: movieschedule_id},{$set: {scheduled_date: scheduled_date, scheduled_time: scheduled_time}})
+  .then(data => {
+  
+    res.send(data);
+ })
+ .catch(err => {
+   console.log("Rrrr");
+   res.status(500).send({
+     message:
+       err.message || "Some error occurred while retrieving Users."
+   });
+ });
+ 
+
+  
+  };
+
+  
+
+exports.listMovieSchedules = (req, res) => {
+
+  
+  ScheduledMovie.find()
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+
+exports.listMovieSchedulesByMe = (req, res) => {
+ console.log(req.body.scheduled_by);
+  ScheduledMovie.find({scheduled_by:req.body.scheduled_by})
+    .then(data => {
+      console.log("dsfds");
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+
+};
+
+
+exports.listMovieSchedulesWithMe = (req, res) => {
+ 
+  var id=req.body.friend_id;
+  ScheduledMovie.find({ "scheduled_with" : { "$elemMatch" : { "friend_id" : id} }})
+    .then(data => {
+      console.log("dsfds");
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+
+};
+
+exports.statusUpdateMovieSchedulesWithMe = (req, res) => {
+ 
+  var id=req.body.friend_id;
+  var status =req.body.status;
+  var movieschedule_id =req.body.movieschedule_id;
+  var fname=req.body.friend_name;
+ 
+  ScheduledMovie.update({ _id: movieschedule_id},{$pull: {"scheduled_with":{friend_name:fname, friend_id:id}}})
+   .then(data => {
+   
+            ScheduledMovie.update({ _id: movieschedule_id},   {$push: {"scheduled_with":{friend_name:fname, friend_id:id, status:status}}})
+          .then(data => {
+            console.log(id);
+            res.send(data);
+          })
+          .catch(err => {
+            console.log("Rrrr");
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while retrieving Users."
+            });
+          });
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+  
+
+};
+
