@@ -178,40 +178,15 @@ invite.save((err, invite) => {
   }});
 };
 
-exports.showFriendInvite = (req, res) => {
+exports.showFriendInviteSent = (req, res) => {
   //Sent Invite by me
-//   const user_id = req.body.user_id;
-//   const mobile_number = req.body.mobile_number;
-//   console.log(user_id);
-//   Friend.aggregate([
-//     {$match : {user_id : user_id}},
-//     {$lookup: {from: "users", localField: "email", foreignField: "email", as: "users"}},]
-
-// ) .then(data => {
-//     console.log(user_id);
-//     res.send(data);
-//   })
-//   .catch(err => {
-//     res.status(500).send({
-//       message:
-//         err.message || "Some error occurred while retrieving Users."
-//     });
-//   });
-
-const sender_mobile_number = req.body.sender_mobile_number;
-
-
+   const sender_mobile_number = req.body.sender_mobile_number;
 Friend.aggregate(
-  
-  [
+    [
      {$match : {sender_mobile_number :  sender_mobile_number }},
      {$lookup: {from: "users", localField: "rec_mobile_number", foreignField: "mobile_number", as: "users"}},
-     
-    
     ]
-
   ).then(data => {
-   // console.log(user_id);
     res.send(data);
   })
   .catch(err => {
@@ -224,11 +199,9 @@ Friend.aggregate(
   };
   
   
-exports.showRecievedInvite = (req, res) => {
-
+exports.showFriendInviteRecieved = (req, res) => {
   //invite recieved by me
   const rec_mobile_number = req.body.rec_mobile_number;
-
 Friend.aggregate(
     [
      {$match : {rec_mobile_number :  rec_mobile_number }},
@@ -243,17 +216,14 @@ Friend.aggregate(
         err.message || "Some error occurred while retrieving Users."
     });
   });
- 
-
-
 };
 
 
 
 exports.showFriends = (req, res) => {
   
-  const user_id = req.body.user_id;
-  const mobile_number = req.body.mobile_number;
+const user_id = req.body.user_id;
+const mobile_number = req.body.mobile_number;
 var arr = [];
 
 Friend.find({

@@ -16,20 +16,16 @@ module.exports = function(app) {
   app.get("/api/user/verifyotp", otpcontroller.verifyOTP);
   app.post("/api/user/changepassword", [authJwt.verifyToken], controller.changepassword);
   
-  app.post("/api/user/sendinvite", controller.sendFriendInvite);
-  app.post("/api/user/acceptrejectinvite", controller.acceptRejectFriendsInvite);
-  app.get("/api/user/showsentinvite",  controller.showFriendInvite);
-  app.get("/api/user/showrecievedinvite",  controller.showRecievedInvite);
-  app.get("/api/user/showmyfriends",  controller.showFriends);
-
-  
-  
   app.get("/api/user/listallusers",  controller.listAll);
   app.get("/api/user/profile", controller.showProfile);
-
   app.post("/api/user/updateprofile", controller.completeProfile);
 
   
+  app.post("/api/user/sendinvite", controller.sendFriendInvite);
+  app.post("/api/user/acceptrejectinvite", controller.acceptRejectFriendsInvite);
+  app.get("/api/user/showsentinvite",  controller.showFriendInviteSent);
+  app.get("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
+  app.get("/api/user/showmyfriends",  controller.showFriends);
 
   
 
