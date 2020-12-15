@@ -11,6 +11,8 @@ db.otp = require("./otp.model");
 db.movie = require("./movie.model");
 db.friend = require("./friends.model");
 db.scheduledmovie = require("./schedule.model");
+db.myfev_movie = require("./myfev_movies.model");
+db.vote_schedule = require("./vote_schedule.model");
 
 
 db.ROLES = ["user", "admin", "moderator", "maker"];

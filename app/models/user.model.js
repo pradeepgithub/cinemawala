@@ -18,14 +18,17 @@ const User = mongoose.model(
     city:String,
     state:String,
     fav_genre:String,
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role"
-      }
-    ],
+    is_maker:Boolean
+   
 
   })
 );
 
 module.exports = User;
+
+// roles: [
+//   {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Role"
+//   }
+// ],

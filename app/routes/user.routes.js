@@ -27,6 +27,8 @@ module.exports = function(app) {
   app.get("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
   app.get("/api/user/showmyfriends",  controller.showFriends);
 
+
+
   
 
  

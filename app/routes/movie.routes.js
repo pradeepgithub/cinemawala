@@ -10,13 +10,18 @@ module.exports = function(app) {
     next();
   });
 
+
+  //Movies 
+  app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
+
+  //Movie Crew
   app.post("/api/movie/updatemoviecrew", moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", moviecontroller.addMovieCrew);
-  app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
 
+  //Movie Listings
   app.get("/api/movie/toptrending", moviecontroller.listMoviesSpecial);
   app.get("/api/movie/alltrending", moviecontroller.listMoviesSpecial);
   app.get("/api/movie/toprecent", moviecontroller.listMoviesSpecial);
@@ -24,13 +29,32 @@ module.exports = function(app) {
   app.get("/api/movie/toprandom", moviecontroller.listMoviesSpecial);
   app.get("/api/movie/allrandom", moviecontroller.findAll);
 
+  //Schedules 
   app.post("/api/movie/addschedule",  [authJwt.verifyToken], moviecontroller.addScheduleMovie);
-  app.post("/api/movie/addfriendstoschedule",  [authJwt.verifyToken], moviecontroller.addFriendsToScheduleMovie);
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
+  app.post("/api/movie/reschedule",   moviecontroller.reScheduleMovie);
+  app.post("/api/movie/delschedule",   moviecontroller.delScheduleMovie);
+
+  //Schedules with me by others
   app.get("/api/movie/listscheduleswithme", moviecontroller.listMovieSchedulesWithMe);
   app.post("/api/movie/listschedulesbyme", moviecontroller.listMovieSchedulesByMe);
   app.post("/api/movie/updatescheduleswithme", moviecontroller.statusUpdateMovieSchedulesWithMe);
-  app.post("/api/movie/reschedule",   moviecontroller.reScheduleMovie);
- 
+
+  //Add Friends to Schedules
+  app.post("/api/movie/addfriendstoschedule", moviecontroller.addFriendsToScheduleMovie);
+  app.post("/api/movie/delfriendsfromschedule",  moviecontroller.delFriendsFromScheduleMovie);
+  app.post("/api/movie/listscheduledfriendsbymovie", moviecontroller.listScheduledFriendsByMovie);
+
+  //Fevourite Movie
+  app.post("/api/movie/addfevmovie",   moviecontroller.addMyFebMovie);
+  app.post("/api/movie/listmyfevmovie", moviecontroller.listMyFevMovies);
+  app.post("/api/movie/delmyfevmovie", moviecontroller.deleteMyFevMovies);
+
+  //Vote for Schedules
+  app.post("/api/movie/sendvoteforschedule",  moviecontroller.sendVoteForScheduleMovie);
+  app.post("/api/movie/addvoteforschedule", moviecontroller.addVoteForScheduleMovie);
+  app.post("/api/movie/listvoteformovieschedule", moviecontroller.listVoteForScheduleMovies);
+
+  app.post("/api/movie/myagree",  moviecontroller.showAgree);
 
 }

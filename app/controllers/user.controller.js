@@ -84,6 +84,23 @@ exports.findAll = (req, res) => {
 };
 
 
+exports.findMakerAll = (req, res) => {
+  const role_id = req.query.first_name;
+  var condition = first_name ? { first_name: { $regex: new RegExp(first_name), $options: "i" } } : {};
+
+  User.find(condition)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
+
+
 exports.listAll = (req, res) => {
   
   User.find()
@@ -277,6 +294,10 @@ exports.acceptRejectFriendsInvite = (req, res) => {
   
 
 };
+
+
+
+
 
 
 

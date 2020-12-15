@@ -4,7 +4,8 @@ const db = require("../models");
 const User = db.user;
 const Movie = db.movie;
 const ScheduledMovie = db.scheduledmovie;
-
+const MyFev_Movie = db.myfev_movie;
+const VoteForScheduledMovie = db.vote_schedule;
 
 exports.findAll = (req, res) => {
     const movie_name = req.query.movie_name;
@@ -20,10 +21,9 @@ exports.findAll = (req, res) => {
             err.message || "Some error occurred while retrieving Users."
         });
       });
-  };
+};
 
-
-exports.findAllByFilter = (req, res) => {
+  exports.findAllByFilter = (req, res) => {
 
   const title = req.body.title;// ? req.body.title : "";
   const length = req.body.duration;// ? req.body.duration : "";
@@ -36,33 +36,8 @@ exports.findAllByFilter = (req, res) => {
   const actors = req.body.actors;//? req.body.actors : "";
   const screened_festival = req.body.festival;//? req.body.festival: "";
 
-  
-  // var condition = [
-  // title ? { title: { $regex: new RegExp(title), $options: "i" } } : {},
-  // type ? { type: { $regex: new RegExp(type), $options: "i" } } : {},
-  
-  // language ? { language: { $regex: new RegExp(language), $options: "i" } } : {},
-  // country ? { country: { $regex: new RegExp(country), $options: "i" } } : {},
-  // genres ? { genres: { $regex: new RegExp(genres), $options: "i" } } : {},
-  // length ? { length: { $regex: new RegExp(length), $options: "i" } } : {},
-  // screened_festival ? { screened_festival: { $regex: new RegExp(screened_festival), $options: "i" } } : {},
-  //   {
-  //    $and: [ { released: { $gte: year_from } }, { released: { $lte: year_to } } ] 
-  //   },
-  //   {actors: actors}
-   
-  // ];
-
-
   Movie.find(
-    {
-     
-     
-     $and: 
-    [ 
-   
-
-    {
+    { $and: [  {
       title: { $regex: new RegExp(title), $options: "i" }},
     type ? { type: { $regex: new RegExp(type), $options: "i" } } : {},
     language ? { language: { $regex: new RegExp(language), $options: "i" } } : {},
@@ -71,11 +46,8 @@ exports.findAllByFilter = (req, res) => {
   length ? { length: { $regex: new RegExp(length), $options: "i" } } : {},
   screened_festival ? { screened_festival: { $regex: new RegExp(screened_festival), $options: "i" } } : {},
   year_to ? { released: year_to} : {},
-  {actors: {$regex: new RegExp(actors), $options: "^$"}}
-    
-   ] 
-  
-  } )
+  {actors: {$regex: new RegExp(actors), $options: "^$"}}] 
+   } )
     .then(data => {
       res.send(data);
     })
@@ -87,7 +59,6 @@ exports.findAllByFilter = (req, res) => {
       });
     });
 };
-
 
 exports.findOneById = (req, res) => {
 
@@ -108,9 +79,7 @@ exports.findOneById = (req, res) => {
     });
 };
 
-  exports.saveMovie = (req, res) => {
-
-   
+exports.saveMovie = (req, res) => {
 
       User.findOne(req.params.username)
       .exec(function(err, doc){
@@ -159,31 +128,9 @@ exports.findOneById = (req, res) => {
         res.status(200).send({ message: movie });
         });
   
-  };
+};
 
-
-//   exports.updateMovieCrew = (req, res) => {
-
-//   Movie.updateMany({_id: req.body.id}, {"$set": {
-//     "crew":[{
-//       "name":req.body.crew_name,
-//       "role":req.body.crew_role,
-//       "email":req.body.crew_email,
-//       "notes": req.body.crew_notes,
-//   }]
-//   }}, {multi: true})
-//   .then(data => {
-//     res.send(data);
-//   })
-//   .catch(err => {
-//     console.log("Rrrr");
-//     res.status(500).send({
-//       message:
-//         err.message || "Some error occurred while retrieving Users."
-//     });
-//   });
-// };
-
+//add movies
 exports.addMovieCrew = (req, res) => {
 
   Movie.update({_id: req.body.id}, {"$push": {
@@ -206,9 +153,7 @@ exports.addMovieCrew = (req, res) => {
   });
 };
 
-
-
-
+//list tranding etc
 exports.listMoviesSpecial = (req, res) => {
 
   //Note: We need to calculate tranding movie
@@ -264,31 +209,9 @@ exports.listMoviesSpecial = (req, res) => {
 
 };
 
-
-exports.addFriendsToScheduleMovie = (req, res) => {
-
-  ScheduledMovie.update({_id: req.body.scheduled_id}, {"$push": {
-    "scheduled_with":{
-      "friend_name":req.body.friend_name,
-      "friend_id":req.body.friend_id,
-      "status":0
-  }
-  }}, {multi: true})
-  .then(data => {
-    res.send(data);
-  })
-  .catch(err => {
-    console.log("Rrrr");
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while scheduling users."
-    });
-  });
-};
+//scheduled movies
 
 exports.addScheduleMovie = (req, res) => {
-
-
 const schedule = new ScheduledMovie({
   title: req.body.title,
   scheduled_by:req.body.scheduled_by,
@@ -311,13 +234,47 @@ schedule.save((err, schedule) => {
 
 };
 
+exports.addFriendsToScheduleMovie = (req, res) => {
+  ScheduledMovie.update({_id: req.body.scheduled_id}, {"$push": {
+    "scheduled_with":{
+      "friend_name":req.body.friend_name,
+      "friend_id":req.body.friend_id,
+      "status":0
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while scheduling users."
+    });
+  });
+};
 
+exports.delFriendsFromScheduleMovie = (req, res) => {
+
+  ScheduledMovie.update({_id: req.body.scheduled_id}, { $pull: {
+    scheduled_with: {
+      "friend_id":req.body.friend_id
+    }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while scheduling users."
+    });
+  });
+};
 
 exports.reScheduleMovie = (req, res) => {
 
-  // ({_id: {$elemMatch:{dname:"Ramesh Shippy", sal:"5000"}}}).pretty(); 
-  //var title = req.body.title;
- // var scheduled_by=req.body.scheduled_by;
   var scheduled_date= req.body.scheduled_date;
   var scheduled_time= req.body.scheduled_time; 
   var movieschedule_id = req.body.movieschedule_id;
@@ -337,10 +294,28 @@ exports.reScheduleMovie = (req, res) => {
  
 
   
-  };
+};
+
+exports.delScheduleMovie = (req, res) => {
+
+  var movieschedule_id = req.body.movieschedule_id;
+  
+  ScheduledMovie.deleteMany({_id: movieschedule_id})
+  .then(data => {
+  
+    res.send(data);
+ })
+ .catch(err => {
+   console.log("Rrrr");
+   res.status(500).send({
+     message:
+       err.message || "Some error occurred while retrieving Users."
+   });
+ });
+ 
 
   
-
+};
 exports.listMovieSchedules = (req, res) => {
 
   
@@ -358,7 +333,6 @@ exports.listMovieSchedules = (req, res) => {
   
 };
 
-
 exports.listMovieSchedulesByMe = (req, res) => {
  console.log(req.body.scheduled_by);
   ScheduledMovie.find({scheduled_by:req.body.scheduled_by})
@@ -375,7 +349,29 @@ exports.listMovieSchedulesByMe = (req, res) => {
     });
 
 };
+exports.listScheduledFriendsByMovie = (req, res) => {
+ 
+  const scheduled_by = req.body.scheduled_by;
+  const title= req.body.title;
+  ScheduledMovie.find(
+    {
+      $and:[
+      {scheduled_by: scheduled_by},{title: title}
+      ]
 
+    }
+  ).then(data => {
+   
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+}
 
 exports.listMovieSchedulesWithMe = (req, res) => {
  
@@ -429,3 +425,142 @@ exports.statusUpdateMovieSchedulesWithMe = (req, res) => {
 
 };
 
+//Vote for Schedule
+exports.sendVoteForScheduleMovie = (req, res) => {
+  const votesforchedulemovie = new VoteForScheduledMovie({
+    title: req.body.title,
+    scheduled_by:req.body.scheduled_by,
+    scheduled_vote:[{
+      friend_name:req.body.friend_name,
+      friend_id:req.body.friend_id,
+      status:0
+    }]
+});
+votesforchedulemovie.save((err, schedule) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send({ message: schedule });
+});
+};
+
+exports.addVoteForScheduleMovie = (req, res) => {
+  VoteForScheduledMovie.update({_id: req.body.vote_scheduled_id}, {"$push": {
+    "scheduled_vote":{
+      "friend_name":req.body.friend_name,
+      "friend_id":req.body.friend_id,
+      "status":0
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while scheduling users."
+    });
+  });
+};
+
+
+
+
+exports.listVoteForScheduleMovies = (req, res) => {
+ 
+  VoteForScheduledMovie.find({$and:[{title: req.body.title},{scheduled_by: req.body.scheduled_by}]})
+     .then(data => {
+        res.send(data);
+     })
+     .catch(err => {
+       console.log("Rrrr");
+       res.status(500).send({
+         message:
+           err.message || "Some error occurred while retrieving Users."
+       });
+     });
+ 
+ };
+//Favourite Movies
+  
+exports.listMyFevMovies = (req, res) => {
+
+  var user_id =  req.body.user_id
+  MyFev_Movie.aggregate(
+    [
+     {$match : {user_id:user_id}},
+     {$lookup: {from: "movies", localField: "title", foreignField: "title", as: "movie_info"}},
+    ]
+  ).then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.deleteMyFevMovies = (req, res) => {
+
+  var fev_id =  req.body.fev_id
+  MyFev_Movie.deleteMany({_id: fev_id})
+  .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.addMyFebMovie = (req, res) => {
+
+  const MyFevMovie = new MyFev_Movie({
+    title: req.body.title,
+                  user_id:  req.body.user_id,
+                  movie_id: req.body.movie_id,
+    
+  });
+  MyFevMovie.save((err, MyFevMovie) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send({ message: MyFevMovie });
+      });
+  
+};
+
+exports.showAgree = (req, res) => {
+ 
+    const scheduled_by = req.body.scheduled_by;
+    const title= req.body.title;
+    ScheduledMovie.find(
+      {
+        $and:[
+        {scheduled_by: scheduled_by},{title: title}
+        ]
+
+      }
+    ).then(data => {
+     
+        res.send(data);
+      })
+      .catch(err => {
+        console.log("Rrrr");
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
+}
