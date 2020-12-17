@@ -29,11 +29,7 @@ const Movie = mongoose.model(
                 notes:String,
                 status:Boolean
                  },
-                watched_by:
-                {
-                user_id: String,
-                date_watched: Date,
-                },
+                
                 ratings:
                 {
                 user_id: String,

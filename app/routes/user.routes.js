@@ -36,7 +36,10 @@ module.exports = function(app) {
 
   app.post("/api/user/writetous",  controller.writeToUs);
   app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
+
+  app.post("/api/user/reportproblem",  controller.reportAProblem);
+  app.get("/api/user/showallreportproblems",  controller.showAllReportProblemsMessages);
   
 
- 
+  
 };

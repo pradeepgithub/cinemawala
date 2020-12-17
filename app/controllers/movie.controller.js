@@ -6,9 +6,10 @@ const Movie = db.movie;
 const ScheduledMovie = db.scheduledmovie;
 const MyFev_Movie = db.myfev_movie;
 const VoteForScheduledMovie = db.vote_schedule;
+const WatchedBy = db.watched_by;
 
 exports.findAll = (req, res) => {
-    const movie_name = req.query.movie_name;
+    const movie_name = req.body.movie_name;
     var condition = movie_name ? { movie_name: { $regex: new RegExp(movie_name), $options: "i" } } : {};
   //  Movie.createIndex( { actors: "text" } )
     Movie.find()
@@ -23,6 +24,21 @@ exports.findAll = (req, res) => {
       });
 };
 
+
+exports.myProjectsList = (req, res) => {
+  const added_by = req.body.added_by;
+
+  Movie.find({added_by:added_by})
+    .then(data => {
+        res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
 exports.findAllByFilter = (req, res) => {
 
   const title = req.body.title;// ? req.body.title : "";
@@ -154,15 +170,77 @@ exports.addMovieCrew = (req, res) => {
   });
 };
 
+exports.listMovieCrewRequests = (req, res) => {
+
+  var title = req.body.title;
+  Movie.find({ 
+
+    $and: [  
+      {crew: {$exists: true }},
+      title ? { title: { $regex: new RegExp(title), $options: "i" } } : {},
+      {crew : { $elemMatch : { status : 0} }}
+] },
+    {'title': 1, crew:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.acceptRejectCrew = (req, res) => {
+ 
+  var id=req.body.movie_id;
+  var crew_name =req.body.crew_name;
+  var status=req.body.status;
+  var email=req.body.crew_email;
+  var role=req.body.crew_role;
+  
+
+  Movie.update({ _id: id},{$pull: {"crew":{name:crew_name}}})
+   .then(data => {
+   
+    Movie.update({ _id: id},   {$push: {"crew":{name:crew_name, role:role, email:email, status:status}}})
+          .then(data => {
+            console.log(id);
+            res.send(data);
+          })
+          .catch(err => {
+            console.log("Rrrr");
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while retrieving Users."
+            });
+          });
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+
+};
+
 exports.listMovieCrew = (req, res) => {
 
   var title = req.body.title;
   Movie.find({ 
       
-
-    $and: [  
-      {crew: {$exists: true }},
+   
+    $and: [ 
+      
+     {crew: {$exists: true }},
       title ? { title: { $regex: new RegExp(title), $options: "i" } } : {},
+
+      
 ] },
     {'title': 1, crew:1})
     .then(data => {
@@ -181,13 +259,38 @@ exports.listMovieCrew = (req, res) => {
 //add movies Watch
 exports.addMovieWatch = (req, res) => {
 
-  Movie.update({_id: req.body.id}, {"$push": {
-    "watched_by":{
-      "user_id":req.body.user_id,
-      "date_watched":req.body.date_watched
-  }
-  }}, {multi: true})
-  .then(data => {
+   const watchedBy = new WatchedBy({
+    "title":req.body.title,
+    "user_id":req.body.user_id,
+    "date_watched":req.body.date_watched
+
+  });
+  watchedBy.save((err, movie) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send({ message: movie });
+      });
+
+};
+
+
+exports.listMovieWatchByUser = (req, res) => {
+
+  // WatchedBy.aggregate([
+  //   {$match:{user_id:id}},
+  //   // { "$project": { "movieid": { "$toObjectId": "$movie_id" } } },
+  //   { "$lookup": {
+  //     "localField": "title",
+  //     "from": "movies",
+  //     "foreignField": "title",
+  //     "as": "movieDetails"
+  //   }}
+  // ])
+
+  var id=req.body.user_id;
+  WatchedBy.find({user_id:id}).then(data => {
     res.send(data);
   })
   .catch(err => {
@@ -197,40 +300,7 @@ exports.addMovieWatch = (req, res) => {
         err.message || "Some error occurred while retrieving Users."
     });
   });
-};
 
-exports.listMovieWatch = (req, res) => {
-
-  Movie.find({watched_by: {$exists: true }},
-    {'title': 1, watched_by:1})
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      console.log("Rrrr");
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Users."
-      });
-    });
-  
-};
-
-exports.listMovieWatchByUser = (req, res) => {
-  var id=req.body.user_id;
-  
-  Movie.find({"watched_by" : { "$elemMatch" : { "user_id" : id} }},
-    {'title': 1, watched_by:1})
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      console.log("Rrrr");
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Users."
-      });
-    });
   
 };
 
@@ -833,30 +903,19 @@ exports.showAgree = (req, res) => {
       });
 }
 
-exports.acceptRejectCrew = (req, res) => {
- 
-  var id=req.body.movie_id;
-  var crew_name =req.body.crew_name;
-  var status=req.body.status;
-  var email=req.body.crew_email;
-  var role=req.body.crew_role;
-  
 
-  Movie.update({ _id: id},{$pull: {"crew":{name:crew_name}}})
-   .then(data => {
-   
-    Movie.update({ _id: id},   {$push: {"crew":{name:crew_name, role:role, email:email, status:status}}})
-          .then(data => {
-            console.log(id);
-            res.send(data);
-          })
-          .catch(err => {
-            console.log("Rrrr");
-            res.status(500).send({
-              message:
-                err.message || "Some error occurred while retrieving Users."
-            });
-          });
+exports.showReports = (req, res) => {
+ 
+  WatchedBy.aggregate([
+    { "$project": { "userObjId": { "$toObjectId": "$user_id" } } },
+    { "$lookup": {
+      "localField": "userObjId",
+      "from": "users",
+      "foreignField": "_id",
+      "as": "userDetails"
+    }}
+  ]).then(data => {
+    res.send(data);
   })
   .catch(err => {
     console.log("Rrrr");
@@ -866,4 +925,5 @@ exports.acceptRejectCrew = (req, res) => {
     });
   });
 
-};
+}
+

@@ -16,7 +16,7 @@ module.exports = function(app) {
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
-
+  app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
   //Movie Crew
   app.post("/api/movie/updatemoviecrew", moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", moviecontroller.addMovieCrew);
@@ -25,7 +25,6 @@ module.exports = function(app) {
 
   //Movie Watch
   app.post("/api/movie/addmoviewatch", moviecontroller.addMovieWatch);
-  app.get("/api/movie/listmoviewatch", moviecontroller.listMovieWatch);
   app.get("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
   
 
@@ -58,7 +57,6 @@ module.exports = function(app) {
   //Add Friends to Schedules
   app.post("/api/movie/addfriendstoschedule", moviecontroller.addFriendsToScheduleMovie);
   app.post("/api/movie/addfriendstoschedulearray", moviecontroller.addFriendsToScheduleMovieArray);
-  
   app.post("/api/movie/delfriendsfromschedule",  moviecontroller.delFriendsFromScheduleMovie);
   app.post("/api/movie/listscheduledfriendsbymovie", moviecontroller.listScheduledFriendsByMovie);
 
@@ -73,5 +71,7 @@ module.exports = function(app) {
   app.post("/api/movie/listvoteformovieschedule", moviecontroller.listVoteForScheduleMovies);
 
   app.post("/api/movie/myagree",  moviecontroller.showAgree);
+  app.post("/api/movie/myreports",  moviecontroller.showReports);
+  
 
 }

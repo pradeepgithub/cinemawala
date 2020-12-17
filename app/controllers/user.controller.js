@@ -328,7 +328,8 @@ const supportwrite = new SupportWrite({
   user_id: uid,
   subject: subj,
   message: msg,
-  status: "New"
+  status: "New",
+  type:"Write to Us"
   
 });
 
@@ -358,7 +359,7 @@ supportwrite.save((err, supportwrite) => {
 };
 
 exports.showAllWriteToUsMessages = (req, res) => {
-  SupportWrite.find({status:"New"})
+  SupportWrite.find({$and:[{status:"New"},{type:{$ne:"Report a Problem"}}]})
     .then(data => {
       res.send(data);
     })
@@ -370,12 +371,63 @@ exports.showAllWriteToUsMessages = (req, res) => {
     });
 };
 
+//Report a Problem
 
-// Team.find({
-//   '_id': { $in: teamIds.split(',') }
-// }, function(err, teamData) {
-//   console.log("teams name  " + teamData);
-// });
+exports.reportAProblem = (req, res) => {
+
+  const uid= req.body.user_id;
+  const subj= req.body.subject;
+  const msg= req.body.message;
+
+
+
+const supportwrite = new SupportWrite({
+  user_id: uid,
+  subject: subj,
+  message: msg,
+  status: "New",
+  type:"Report a Problem"
+  
+});
+
+const message = {
+  from: 'pradeep.invite@gmail.com', // Sender address
+  to: 'pradeep.invite@gmail.com',         // recipients
+  subject: subj, // Subject line
+  text: msg // Plain text body
+};
+
+supportwrite.save((err, supportwrite) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+    res.status(200).send({ message: supportwrite });
+    transport.sendMail(message, function(err, info) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('mail has sent.');
+        console.log(info);
+      }
+    });
+
+    });
+};
+
+exports.showAllReportProblemsMessages = (req, res) => {
+  SupportWrite.find({$and:[{status:"New"},{type:"Report a Problem"}]})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
+
 
 exports.sendFriendInviteArray = (req, res) => {
 

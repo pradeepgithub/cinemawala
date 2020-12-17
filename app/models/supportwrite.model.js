@@ -8,6 +8,7 @@ const SupportWrite = mongoose.model(
             subject:String,
             message: String,
             status: String,
+            type:String
                      
         })
 );
