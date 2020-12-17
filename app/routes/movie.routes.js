@@ -20,6 +20,19 @@ module.exports = function(app) {
   //Movie Crew
   app.post("/api/movie/updatemoviecrew", moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", moviecontroller.addMovieCrew);
+  app.get("/api/movie/listmoviecrew", moviecontroller.listMovieCrew);
+  app.post("/api/movie/acceptmoviecrew", moviecontroller.acceptRejectCrew);
+
+  //Movie Watch
+  app.post("/api/movie/addmoviewatch", moviecontroller.addMovieWatch);
+  app.get("/api/movie/listmoviewatch", moviecontroller.listMovieWatch);
+  app.get("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
+  
+
+  //Movie Ratings
+  app.post("/api/movie/addmovierating", moviecontroller.addMovieRating);
+  app.get("/api/movie/listmovierating", moviecontroller.listMovieRating);
+  app.get("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
 
   //Movie Listings
   app.get("/api/movie/toptrending", moviecontroller.listMoviesSpecial);
@@ -30,7 +43,9 @@ module.exports = function(app) {
   app.get("/api/movie/allrandom", moviecontroller.findAll);
 
   //Schedules 
-  app.post("/api/movie/addschedule",  [authJwt.verifyToken], moviecontroller.addScheduleMovie);
+  app.post("/api/movie/addschedule", moviecontroller.addScheduleMovie);
+  app.post("/api/movie/addscreening", moviecontroller.addScreeningMovie);
+  
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
   app.post("/api/movie/reschedule",   moviecontroller.reScheduleMovie);
   app.post("/api/movie/delschedule",   moviecontroller.delScheduleMovie);
@@ -42,6 +57,8 @@ module.exports = function(app) {
 
   //Add Friends to Schedules
   app.post("/api/movie/addfriendstoschedule", moviecontroller.addFriendsToScheduleMovie);
+  app.post("/api/movie/addfriendstoschedulearray", moviecontroller.addFriendsToScheduleMovieArray);
+  
   app.post("/api/movie/delfriendsfromschedule",  moviecontroller.delFriendsFromScheduleMovie);
   app.post("/api/movie/listscheduledfriendsbymovie", moviecontroller.listScheduledFriendsByMovie);
 

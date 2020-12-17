@@ -8,6 +8,7 @@ const ScheduledMovie = mongoose.model(
             scheduled_by:String,
             scheduled_date: Date,
             scheduled_time: String,
+            type_of_view:String,
             
                 scheduled_with:
                 {

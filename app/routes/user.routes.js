@@ -17,18 +17,25 @@ module.exports = function(app) {
   app.post("/api/user/changepassword", [authJwt.verifyToken], controller.changepassword);
   
   app.get("/api/user/listallusers",  controller.listAll);
+  app.get("/api/user/listallmakers",  controller.findMakerAll);
   app.get("/api/user/profile", controller.showProfile);
   app.post("/api/user/updateprofile", controller.completeProfile);
 
   
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
+  //sending multiple invites
+  app.post("/api/user/sendinvitearray", controller.sendFriendInviteArray);
+  
+
   app.post("/api/user/acceptrejectinvite", controller.acceptRejectFriendsInvite);
   app.get("/api/user/showsentinvite",  controller.showFriendInviteSent);
   app.get("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
   app.get("/api/user/showmyfriends",  controller.showFriends);
+  app.post("/api/user/unfriend", controller.unFriends);
 
 
-
+  app.post("/api/user/writetous",  controller.writeToUs);
+  app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
   
 
  

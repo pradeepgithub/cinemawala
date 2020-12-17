@@ -3,10 +3,14 @@ const db = require("../models");
 const nodemailer = require('nodemailer');
 var bcrypt = require("bcryptjs");
 const Friends = require("../models/friends.model");
-
+const { schema } = require("../models/friends.model");
+const mongoose = require("mongoose");
 const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
+const SupportWrite = db.supportwrite;
+// var Schema = mongoose.Schema;
+//     ObjectId = Schema.ObjectId;
 
 let transport = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -84,11 +88,10 @@ exports.findAll = (req, res) => {
 };
 
 
-exports.findMakerAll = (req, res) => {
-  const role_id = req.query.first_name;
-  var condition = first_name ? { first_name: { $regex: new RegExp(first_name), $options: "i" } } : {};
 
-  User.find(condition)
+exports.findMakerAll = (req, res) => {
+  User.find(
+    { is_maker:true   } )
     .then(data => {
       res.send(data);
     })
@@ -145,7 +148,8 @@ exports.changepassword = (req, res) => {
 exports.sendFriendInvite = (req, res) => {
 
   const fid= req.body.friend_id;
-
+var idarrays = fid.split(','); 
+console.log(idarrays);
   User.findOne({_id:fid})
   
   .exec(function(err, doc){
@@ -186,11 +190,6 @@ invite.save((err, invite) => {
         console.log(info);
       }
     });
-    
-   // res.send({ message: "Mail Sent" });
-    
-
-
     });
   }});
 };
@@ -233,6 +232,26 @@ Friend.aggregate(
         err.message || "Some error occurred while retrieving Users."
     });
   });
+};
+
+exports.unFriends = (req, res) => {
+
+const uid= req.body.user_id;
+const fid= req.body.friend_id;
+var idarrays = fid.split(','); 
+
+  Friend.remove({$and:[{$or:[{user_id: fid},{friend_id:fid}]},{$or:[{user_id: uid},{friend_id:uid}]}]}).then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+
+
+
 };
 
 
@@ -297,7 +316,120 @@ exports.acceptRejectFriendsInvite = (req, res) => {
 
 
 
+exports.writeToUs = (req, res) => {
+
+  const uid= req.body.user_id;
+  const subj= req.body.subject;
+  const msg= req.body.message;
 
 
 
+const supportwrite = new SupportWrite({
+  user_id: uid,
+  subject: subj,
+  message: msg,
+  status: "New"
+  
+});
 
+const message = {
+  from: 'pradeep.invite@gmail.com', // Sender address
+  to: 'pradeep.invite@gmail.com',         // recipients
+  subject: subj, // Subject line
+  text: msg // Plain text body
+};
+
+supportwrite.save((err, supportwrite) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+    res.status(200).send({ message: supportwrite });
+    transport.sendMail(message, function(err, info) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('mail has sent.');
+        console.log(info);
+      }
+    });
+
+    });
+};
+
+exports.showAllWriteToUsMessages = (req, res) => {
+  SupportWrite.find({status:"New"})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
+
+
+// Team.find({
+//   '_id': { $in: teamIds.split(',') }
+// }, function(err, teamData) {
+//   console.log("teams name  " + teamData);
+// });
+
+exports.sendFriendInviteArray = (req, res) => {
+
+const fids= req.body.friend_id;
+var id = fids.split(", ");
+var uid=req.body.user_id;
+var smobilenumber=req.body.sender_mobile_number;
+
+  User.find({_id: { $in: id }}).then(data => {
+    data.forEach(doc => {
+      if(doc._id !=="")
+      {
+        
+
+                      const invite = new Friend({
+                        user_id: uid,
+                        friend_id: doc._id,
+                        username:doc.username,
+                        sender_mobile_number: smobilenumber,
+                        rec_mobile_number: doc.mobile_number,
+                        email: doc.email,
+                        status: 0
+                        
+                      });
+
+                      const message = {
+                        from: 'pradeep.invite@gmail.com', // Sender address
+                        to: doc.email,         // recipients
+                        subject: 'friend Invite', // Subject line
+                        text: "Message for Invite" // Plain text body
+                      };
+
+                      invite.save((err, invite) => {
+                          if (err) {
+                            res.status(500).send({ message: err });
+                            return;
+                          }
+                         
+                          transport.sendMail(message, function(err, info) {
+                            if (err) {
+                              console.log(err)
+                            } else {
+                              console.log('mail has sent.');
+                              console.log(info);
+                            }
+                          });
+                          });
+
+     }});
+     res.status(200).send({ message: data });
+    }) .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};

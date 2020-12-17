@@ -1,5 +1,5 @@
 const config = require("../config/auth.config");
-const { user } = require("../models");
+const { user, role } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Movie = db.movie;
@@ -23,7 +23,7 @@ exports.findAll = (req, res) => {
       });
 };
 
-  exports.findAllByFilter = (req, res) => {
+exports.findAllByFilter = (req, res) => {
 
   const title = req.body.title;// ? req.body.title : "";
   const length = req.body.duration;// ? req.body.duration : "";
@@ -130,7 +130,7 @@ exports.saveMovie = (req, res) => {
   
 };
 
-//add movies
+//add movies crew
 exports.addMovieCrew = (req, res) => {
 
   Movie.update({_id: req.body.id}, {"$push": {
@@ -139,6 +139,7 @@ exports.addMovieCrew = (req, res) => {
       "role":req.body.crew_role,
       "email":req.body.crew_email,
       "notes": req.body.crew_notes,
+      "status": req.body.status,
   }
   }}, {multi: true})
   .then(data => {
@@ -151,6 +152,144 @@ exports.addMovieCrew = (req, res) => {
         err.message || "Some error occurred while retrieving Users."
     });
   });
+};
+
+exports.listMovieCrew = (req, res) => {
+
+  var title = req.body.title;
+  Movie.find({ 
+      
+
+    $and: [  
+      {crew: {$exists: true }},
+      title ? { title: { $regex: new RegExp(title), $options: "i" } } : {},
+] },
+    {'title': 1, crew:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+//add movies Watch
+exports.addMovieWatch = (req, res) => {
+
+  Movie.update({_id: req.body.id}, {"$push": {
+    "watched_by":{
+      "user_id":req.body.user_id,
+      "date_watched":req.body.date_watched
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+};
+
+exports.listMovieWatch = (req, res) => {
+
+  Movie.find({watched_by: {$exists: true }},
+    {'title': 1, watched_by:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.listMovieWatchByUser = (req, res) => {
+  var id=req.body.user_id;
+  
+  Movie.find({"watched_by" : { "$elemMatch" : { "user_id" : id} }},
+    {'title': 1, watched_by:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+
+
+//add movies Ratings
+exports.addMovieRating = (req, res) => {
+
+  Movie.update({_id: req.body.id}, {"$push": {
+    "ratings":{
+      "user_id":req.body.user_id,
+      "rating":req.body.rating
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+};
+
+exports.listMovieRating = (req, res) => {
+
+  Movie.find({ratings: {$exists: true }},
+    {'title': 1, ratings:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.listMovieRatingByUser = (req, res) => {
+  var id=req.body.user_id;
+  
+  Movie.find({"ratings" : { "$elemMatch" : { "user_id" : id} }},
+    {'title': 1, ratings:1})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
 };
 
 //list tranding etc
@@ -212,29 +351,59 @@ exports.listMoviesSpecial = (req, res) => {
 //scheduled movies
 
 exports.addScheduleMovie = (req, res) => {
+
+  const fids= req.body.friend_id;
+  var id = fids.split(", ");
+  
+  
 const schedule = new ScheduledMovie({
   title: req.body.title,
   scheduled_by:req.body.scheduled_by,
   scheduled_date: req.body.scheduled_date,
   scheduled_time: req.body.scheduled_time,
-  scheduled_with:[{
-    friend_name:req.body.friend_name,
-    friend_id:req.body.friend_id,
-    status:0
-  }]
+  type_of_view:"schedule",
 
 });
-schedule.save((err, schedule) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-    res.status(200).send({ message: schedule });
-    });
 
+schedule.save((err, schedule) => {
+  if (err) {
+    res.status(500).send({ message: err });
+    return;
+  }
+ 
+  scheduled_id=schedule._id;
+  User.find({_id: { $in: id }}).then(data => {
+
+    data.forEach(doc => {
+      if(doc._id !=="")
+      {
+          //
+          ScheduledMovie.update({_id: scheduled_id}, {"$push": {
+            "scheduled_with":{
+              "friend_name":doc.first_name + ' ' + doc.last_name,
+              "friend_id":doc._id,
+              "status":0
+          }
+          }}, {multi: true})
+          .then(data => {
+         
+          }).catch(err => {
+            //res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
+          });
+        /////
+    }});
+    res.send(data);
+}).catch(err => {
+res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
+});
+
+
+  });
 };
 
 exports.addFriendsToScheduleMovie = (req, res) => {
+
+
   ScheduledMovie.update({_id: req.body.scheduled_id}, {"$push": {
     "scheduled_with":{
       "friend_name":req.body.friend_name,
@@ -251,6 +420,39 @@ exports.addFriendsToScheduleMovie = (req, res) => {
       message:
         err.message || "Some error occurred while scheduling users."
     });
+  });
+};
+
+exports.addFriendsToScheduleMovieArray = (req, res) => {
+
+const fids= req.body.friend_id;
+var id = fids.split(", ");
+var uid=req.body.user_id;
+var scheduled_id=req.body.scheduled_id;
+console.log(id);
+  User.find({_id: { $in: id }}).then(data => {
+   
+        data.forEach(doc => {
+          if(doc._id !=="")
+          {
+              //
+              ScheduledMovie.update({_id: scheduled_id}, {"$push": {
+                "scheduled_with":{
+                  "friend_name":doc.first_name + ' ' + doc.last_name,
+                  "friend_id":doc._id,
+                  "status":0
+              }
+              }}, {multi: true})
+              .then(data => {
+              // res.send(data);
+              }).catch(err => {
+                //res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
+              });
+            /////
+        }});
+        res.send(data);
+  }).catch(err => {
+    res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
   });
 };
 
@@ -353,10 +555,15 @@ exports.listScheduledFriendsByMovie = (req, res) => {
  
   const scheduled_by = req.body.scheduled_by;
   const title= req.body.title;
+  const type_of_view= req.body.type_of_view;
+  if(type_of_view === "")
+  {
+    type_of_view="Schedule";
+  }
   ScheduledMovie.find(
     {
       $and:[
-      {scheduled_by: scheduled_by},{title: title}
+      {scheduled_by: scheduled_by},{title: title}, {type_of_view: type_of_view}
       ]
 
     }
@@ -465,9 +672,6 @@ exports.addVoteForScheduleMovie = (req, res) => {
   });
 };
 
-
-
-
 exports.listVoteForScheduleMovies = (req, res) => {
  
   VoteForScheduledMovie.find({$and:[{title: req.body.title},{scheduled_by: req.body.scheduled_by}]})
@@ -483,7 +687,71 @@ exports.listVoteForScheduleMovies = (req, res) => {
      });
  
  };
-//Favourite Movies
+
+
+//screening
+
+ exports.addScreeningMovie = (req, res) => {
+
+  const fids= req.body.friend_id;
+var id = fids.split(", ");
+
+
+
+  const schedule = new ScheduledMovie({
+    title: req.body.title,
+    scheduled_by:req.body.scheduled_by,
+    scheduled_date: req.body.scheduled_date,
+    scheduled_time: req.body.scheduled_time,
+    type_of_view:"Screening",
+    // scheduled_with:[{
+    //   friend_name:req.body.friend_name,
+    //   friend_id:req.body.friend_id,
+    //   status:0
+    // }]
+  
+  });
+  schedule.save((err, schedule) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+     
+      scheduled_id=schedule._id;
+      User.find({_id: { $in: id }}).then(data => {
+   
+        data.forEach(doc => {
+          if(doc._id !=="")
+          {
+              //
+              ScheduledMovie.update({_id: scheduled_id}, {"$push": {
+                "scheduled_with":{
+                  "friend_name":doc.first_name + ' ' + doc.last_name,
+                  "friend_id":doc._id,
+                  "status":0
+              }
+              }}, {multi: true})
+              .then(data => {
+              // res.send(data);
+              }).catch(err => {
+                //res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
+              });
+            /////
+        }});
+        res.send(data);
+  }).catch(err => {
+    res.status(500).send({ message: err.message || "Some error occurred while scheduling users." });
+  });
+
+
+      });
+  
+  };
+  
+
+
+
+ //Favourite Movies
   
 exports.listMyFevMovies = (req, res) => {
 
@@ -564,3 +832,38 @@ exports.showAgree = (req, res) => {
         });
       });
 }
+
+exports.acceptRejectCrew = (req, res) => {
+ 
+  var id=req.body.movie_id;
+  var crew_name =req.body.crew_name;
+  var status=req.body.status;
+  var email=req.body.crew_email;
+  var role=req.body.crew_role;
+  
+
+  Movie.update({ _id: id},{$pull: {"crew":{name:crew_name}}})
+   .then(data => {
+   
+    Movie.update({ _id: id},   {$push: {"crew":{name:crew_name, role:role, email:email, status:status}}})
+          .then(data => {
+            console.log(id);
+            res.send(data);
+          })
+          .catch(err => {
+            console.log("Rrrr");
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while retrieving Users."
+            });
+          });
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+
+};
