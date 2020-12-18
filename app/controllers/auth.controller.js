@@ -126,7 +126,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     year_of_birth:req.body.year_of_birth,
     password: bcrypt.hashSync(req.body.password, 8),
-    is_maker:true
+    is_maker:req.body.is_maker
   });
 
   user.save((err, user) => {
@@ -135,7 +135,7 @@ exports.signup = (req, res) => {
       res.status(500).send({ message: err });
       return;
     }
-    res.send(user, { message: "User was registered successfully!" });
+    res.status(200).send({ message: "User was registered successfully!" });
   });
 };
 

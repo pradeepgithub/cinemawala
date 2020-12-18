@@ -10,9 +10,9 @@ module.exports = function(app) {
     next();
   });
 
-
+//[authJwt.verifyToken],
   //Movies 
-  app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
+  app.post("/api/movie/save",  moviecontroller.saveMovie);
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
