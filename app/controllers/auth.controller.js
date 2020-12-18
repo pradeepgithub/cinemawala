@@ -126,7 +126,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     year_of_birth:req.body.year_of_birth,
     password: bcrypt.hashSync(req.body.password, 8),
-    is_maker:req.body.is_maker
+    is_maker:true
   });
 
   user.save((err, user) => {
@@ -134,8 +134,12 @@ exports.signup = (req, res) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
-    }
-    res.status(200).send({ message: "User was registered successfully!" });
+    } 
+    
+    res.status(200).send({ message: user });
+
+
+   // res.send(user, { message: "User was registered successfully!" });
   });
 };
 
@@ -148,11 +152,14 @@ exports.signin = (req, res) => {
         res.status(500).send({ message: err });
         return;
       }
+
+     
       var passwordIsValid = bcrypt.compareSync(
         req.body.password,
         user.password
       );
-
+   
+    
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
@@ -164,7 +171,9 @@ exports.signin = (req, res) => {
         expiresIn: 86400 // 24 hours
       });
 
-    
+      // console.log(token);
+
+
       res.status(200).send({
         id: user._id,
         username: user.username,

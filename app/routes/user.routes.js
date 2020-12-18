@@ -18,8 +18,8 @@ module.exports = function(app) {
   
   app.get("/api/user/listallusers",  controller.listAll);
   app.get("/api/user/listallmakers",  controller.findMakerAll);
-  app.get("/api/user/profile", controller.showProfile);
-  app.post("/api/user/updateprofile", controller.completeProfile);
+  app.get("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
+  app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
 
   
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
@@ -34,10 +34,10 @@ module.exports = function(app) {
   app.post("/api/user/unfriend", controller.unFriends);
 
 
-  app.post("/api/user/writetous",  controller.writeToUs);
+  app.post("/api/user/writetous",  [authJwt.verifyToken],  controller.writeToUs);
   app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
 
-  app.post("/api/user/reportproblem",  controller.reportAProblem);
+  app.post("/api/user/reportproblem",  [authJwt.verifyToken], controller.reportAProblem);
   app.get("/api/user/showallreportproblems",  controller.showAllReportProblemsMessages);
   
 

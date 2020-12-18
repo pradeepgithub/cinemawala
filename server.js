@@ -20,6 +20,7 @@ const Role = db.role;
 
 // .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
 db.mongoose
+//.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
   .connect(`${dbConfig.DBUrl}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true

@@ -12,7 +12,8 @@ module.exports = function(app) {
 
 //[authJwt.verifyToken],
   //Movies 
-  app.post("/api/movie/save",  moviecontroller.saveMovie);
+  app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
+  
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
@@ -42,15 +43,15 @@ module.exports = function(app) {
   app.get("/api/movie/allrandom", moviecontroller.findAll);
 
   //Schedules 
-  app.post("/api/movie/addschedule", moviecontroller.addScheduleMovie);
-  app.post("/api/movie/addscreening", moviecontroller.addScreeningMovie);
+  app.post("/api/movie/addschedule",  [authJwt.verifyToken], moviecontroller.addScheduleMovie);
+  app.post("/api/movie/addscreening", [authJwt.verifyToken], moviecontroller.addScreeningMovie);
 
   
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
   app.get("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
 
   
-  app.post("/api/movie/reschedule",   moviecontroller.reScheduleMovie);
+  app.post("/api/movie/reschedule",    moviecontroller.reScheduleMovie);
   app.post("/api/movie/delschedule",   moviecontroller.delScheduleMovie);
 
   //Schedules with me by others

@@ -23,16 +23,27 @@ let transport = nodemailer.createTransport({
 });
 
 exports.showProfile = (req, res) => {
-  User.findOne(req.params.username)
-  .select('username first_name last_name, email, country, mobile_number, gender, year_of_birth, pin')
-  .exec(function(err, doc){
-    if(err || doc === null){
-      res.status(404).json({error: 'PersonNotFound'});
-    } else {
-      res.json(doc);
-    }
-});
+//   User.findOne(req.params.username)
+//   .select('username first_name last_name, email, country, mobile_number, gender, year_of_birth, pin')
+//   .exec(function(err, doc){
+//     if(err || doc === null){
+//       res.status(404).json({error: 'PersonNotFound'});
+//     } else {
+//       // res.json(doc);
+//       res.send(doc);
+//     }
+// });
  
+User.findOne(req.params.username).then(data => {
+  res.json(data);
+})
+.catch(err => {
+  res.status(500).send({
+    message:
+      err.message || "Some error occurred while retrieving Users."
+  });
+});
+
 };
 
 
