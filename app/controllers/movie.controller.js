@@ -907,13 +907,22 @@ exports.showAgree = (req, res) => {
 exports.showReports = (req, res) => {
  
   WatchedBy.aggregate([
-    { "$project": { "userObjId": { "$toObjectId": "$user_id" } } },
+    { "$project": { "user_id": { "$toObjectId": "$user_id" }, "title":1, "userDetails.first_name":1, "userDetails.last_name":1, "userDetails.gender":1, "userDetails.country":1 } },
     { "$lookup": {
-      "localField": "userObjId",
+      "localField": "user_id",
       "from": "users",
       "foreignField": "_id",
       "as": "userDetails"
-    }}
+    }},
+    {$group : {
+      _id : "$userDetails.gender",
+       count: { $sum: 1 }
+   }}
+
+    
+   
+    
+  
   ]).then(data => {
     res.send(data);
   })
