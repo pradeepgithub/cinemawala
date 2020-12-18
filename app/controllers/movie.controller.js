@@ -818,7 +818,24 @@ var id = fids.split(", ");
   
   };
   
+  exports.listMovieScreening = (req, res) => {
 
+  var type_of_view = req.body.type_of_view;
+  var scheduled_by = req.body.scheduled_by;
+
+    ScheduledMovie.find({type_of_view:type_of_view, scheduled_by:scheduled_by})
+      .then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        console.log("Rrrr");
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
+    
+  };
 
 
  //Favourite Movies

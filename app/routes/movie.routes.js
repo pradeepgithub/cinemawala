@@ -44,8 +44,12 @@ module.exports = function(app) {
   //Schedules 
   app.post("/api/movie/addschedule", moviecontroller.addScheduleMovie);
   app.post("/api/movie/addscreening", moviecontroller.addScreeningMovie);
+
   
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
+  app.get("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
+
+  
   app.post("/api/movie/reschedule",   moviecontroller.reScheduleMovie);
   app.post("/api/movie/delschedule",   moviecontroller.delScheduleMovie);
 
