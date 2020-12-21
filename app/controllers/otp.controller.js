@@ -1,12 +1,13 @@
 const config = require("../config/auth.config");
 const nodemailer = require('nodemailer');
-
 const db = require("../models");
 const Otp = db.otp;  
 const User = db.user;
 const Role = db.role;
 
-
+const accountSid = config.accountSid;
+const authToken = config.authToken;
+const client = require('twilio')(accountSid, authToken)
 
 let transport = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -18,9 +19,7 @@ let transport = nodemailer.createTransport({
   }
 });
 
-
 exports.sendOTP = (req, res) => {
-
   var valotp = Math.floor(1000 + Math.random() * 9000);
   const otps = new Otp({
    mobile_number: req.body.mobile_number,
@@ -40,33 +39,42 @@ exports.sendOTP = (req, res) => {
             res.status(500).send({ message: err });
             return;
           }
-               
-               
-
-
-
-
+         
         });   
 
       } else {
   
        var userToUpdate = req.body.mobile_number;
          Otp.updateOne({ mobile_number: userToUpdate }, {$set: {otp: valotp} }, function (err, result) {
-          // res.send((err === null) ? {message: result } : {msg: err} );
           const message = {
             from: 'pradeep.verma@webhungers.com', // Sender address
             to: 'pradeep.invite@gmail.com',         // recipients
             subject: 'OTP', // Subject line
             text: 'OTP:'+valotp // Plain text body
         };
-        transport.sendMail(message, function(err, info) {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log('mail has sent.');
-              console.log(info);
-            }
-        });
+
+
+          client.messages.create({
+            body: 'Your OTP for account verification is this: '+valotp,
+            from: '+12517665750',
+            to: '+91'+userToUpdate
+          })
+          .then(message => console.log(message.sid))
+          .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving Users."
+          });
+          });
+
+        // transport.sendMail(message, function(err, info) {
+        //     if (err) {
+        //       console.log(err)
+        //     } else {
+        //       console.log('mail has sent.');
+        //       console.log(info);
+        //     }
+        // });
 
           res.send({ message: valotp });
     });
