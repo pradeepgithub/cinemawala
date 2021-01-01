@@ -82,6 +82,28 @@ exports.completeProfile = (req, res) => {
 };
 
 
+exports.completeProfile = (req, res) => {
+  
+  
+  year_of_birth=req.body.year_of_birth,
+ 
+  User.updateMany({}, {$set: { year_of_birth:year_of_birth }}).then(data => {
+
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+
+
+
+
+};
+
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
   var condition = first_name ? { first_name: { $regex: new RegExp(first_name), $options: "i" } } : {};

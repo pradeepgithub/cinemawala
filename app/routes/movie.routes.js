@@ -1,6 +1,10 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
 const moviecontroller = require("../controllers/movie.controller");
+
+const reportscontroller = require("../controllers/reports.controller");
+
+
 module.exports = function(app) {
   app.use(function(req, res, next) {
     res.header(
@@ -77,6 +81,11 @@ module.exports = function(app) {
 
   app.post("/api/movie/myagree",  moviecontroller.showAgree);
   app.post("/api/movie/myreports",  moviecontroller.showReports);
+
+  app.post("/api/reports/showreportsusercountrywise",  reportscontroller.showReportsUserCountryWise);
+  app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
+  app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
+  
   
 
 }

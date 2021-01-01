@@ -278,9 +278,11 @@ exports.addMovieWatch = (req, res) => {
 
 exports.listMovieWatchByUser = (req, res) => {
 
+  var id=req.body.user_id;
+
   // WatchedBy.aggregate([
   //   {$match:{user_id:id}},
-  //   // { "$project": { "movieid": { "$toObjectId": "$movie_id" } } },
+    // { "$project": { "movieid": { "$toObjectId": "$movie_id" } } },
   //   { "$lookup": {
   //     "localField": "title",
   //     "from": "movies",
@@ -289,7 +291,7 @@ exports.listMovieWatchByUser = (req, res) => {
   //   }}
   // ])
 
-  var id=req.body.user_id;
+
   WatchedBy.find({user_id:id}).then(data => {
     res.send(data);
   })
@@ -300,7 +302,6 @@ exports.listMovieWatchByUser = (req, res) => {
         err.message || "Some error occurred while retrieving Users."
     });
   });
-
   
 };
 
@@ -921,35 +922,52 @@ exports.showAgree = (req, res) => {
 }
 
 
-exports.showReports = (req, res) => {
- 
+
+
+
+    
+
+exports.showReports= (req, res) => {
+
   WatchedBy.aggregate([
-    { "$project": { "user_id": { "$toObjectId": "$user_id" }, "title":1, "userDetails.first_name":1, "userDetails.last_name":1, "userDetails.gender":1, "userDetails.country":1 } },
+    {$match: {"users.gender":{$ne: ""}}},
+   { "$project": { "user_id": { "$toObjectId": "$user_id"},title:1 } },
     { "$lookup": {
-      "localField": "user_id",
       "from": "users",
+      "localField":  "user_id",
       "foreignField": "_id",
-      "as": "userDetails"
+      "as": "Watched_by"
     }},
-    {$group : {
-      _id : "$userDetails.gender",
-       count: { $sum: 1 }
-   }}
+    { "$project": { 
+      title:1,
+      "Watched_by.first_name":1,
+      "Watched_by.gender":1
+     } },
 
-    
+     
+
+     
+
+     {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
    
-    
-  
-  ]).then(data => {
-    res.send(data);
-  })
-  .catch(err => {
-    console.log("Rrrr");
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while retrieving Users."
-    });
-  });
+    {$project: {"_id":0, "title":"$_id.title",gender:{ $toString: "$_id.gender" } , count:"$totalPerson"  }},
 
+
+  
+   
+  ])
+
+
+  .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log("Rrrr");
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+    
 }
 

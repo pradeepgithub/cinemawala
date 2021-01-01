@@ -78,8 +78,6 @@ exports.sendOTP = (req, res) => {
 
           res.send({ message: valotp });
     });
-          
-
   
      }
    });
