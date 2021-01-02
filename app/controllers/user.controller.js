@@ -11,6 +11,7 @@ const Friend = db.friend;
 const SupportWrite = db.supportwrite;
 // var Schema = mongoose.Schema;
 //     ObjectId = Schema.ObjectId;
+// const uploadFile = require("../middlewares/upload");
 
 let transport = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -48,7 +49,7 @@ User.findOne(req.params.username).then(data => {
 
 
 exports.completeProfile = (req, res) => {
-  
+
     first_name= req.body.first_name,
     last_name=req.body.last_name,
     user_id=req.body.user_id,
@@ -62,11 +63,11 @@ exports.completeProfile = (req, res) => {
     state= req.body.state,
     pin= req.body.pin
     fav_genre=req.body.fav_genre;
-
+    profileimage="";
     User.updateOne({_id: user_id}, {$set: {first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
-      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre   }}).then(data => {
-        console.log(user_id);
-        res.send(data);
+      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre, profileimage:profileimage   }}).then(data => {
+       
+      res.send(data);
       })
       .catch(err => {
         res.status(500).send({
@@ -82,27 +83,6 @@ exports.completeProfile = (req, res) => {
 };
 
 
-exports.completeProfile = (req, res) => {
-  
-  
-  year_of_birth=req.body.year_of_birth,
- 
-  User.updateMany({}, {$set: { year_of_birth:year_of_birth }}).then(data => {
-
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Users."
-      });
-    });
-  
-
-
-
-
-};
 
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
@@ -518,3 +498,21 @@ var smobilenumber=req.body.sender_mobile_number;
       });
     });
 };
+
+
+
+
+// "user_id":"5fdc8e7911ce7509c847617c",
+//     "first_name": "Pradeep",
+//      "last_name": "Verma",
+//       "mobile_number": "9926619949",
+//        "gender": "male",
+//        "country": "91",
+//         "username": "pverma",
+//          "email": "pradeep@gmail.com",
+//         "year_of_birth":"1980", 
+//      "street":"street", 
+//      "city":"city", 
+//      "state":"state", 
+//      "pin":"9926619949",
+//      "fav_genre":"Crime, Thriller"   
