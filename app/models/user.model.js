@@ -18,7 +18,8 @@ const User = mongoose.model(
     city:String,
     state:String,
     fav_genre:String,
-    is_maker:Boolean
+    is_maker:Boolean,
+    profile_image:String,
    
 
   })

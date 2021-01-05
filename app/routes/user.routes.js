@@ -1,6 +1,9 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
 const otpcontroller = require("../controllers/otp.controller");
+const multer = require('multer');
+const { exists } = require("../models/otp.model");
+const upload = multer({dest:'uploads/images'});
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -20,8 +23,9 @@ module.exports = function(app) {
   app.get("/api/user/listallmakers",  controller.findMakerAll);
   app.get("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
   app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
+  app.post("/api/user/updateprofilewithimage", upload.single('profile_image'), controller.completeProfile);
 
-  
+
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
   //sending multiple invites
   app.post("/api/user/sendinvitearray", controller.sendFriendInviteArray);
@@ -40,6 +44,8 @@ module.exports = function(app) {
   app.post("/api/user/reportproblem",  [authJwt.verifyToken], controller.reportAProblem);
   app.get("/api/user/showallreportproblems",  controller.showAllReportProblemsMessages);
   
+ // app.post("/api/user/uploadprofileimage",  controller.uploadProfileImage);
 
+  app.post('/api/user/uploadprofileimage', upload.single('demo_image'), controller.uploadProfileImage);
   
 };

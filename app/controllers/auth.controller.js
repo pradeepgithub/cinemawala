@@ -126,8 +126,19 @@ exports.signup = (req, res) => {
     email: req.body.email,
     year_of_birth:req.body.year_of_birth,
     password: bcrypt.hashSync(req.body.password, 8),
-    is_maker:true
+    profile_image:'',
+    is_maker:true,
+    street:'',
+    city: '',
+    state: '',
+    pin:'',
+    fav_genre:'',
+    
   });
+
+
+   
+   
 
   user.save((err, user) => {
     console.log(user);

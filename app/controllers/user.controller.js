@@ -5,20 +5,24 @@ var bcrypt = require("bcryptjs");
 const Friends = require("../models/friends.model");
 const { schema } = require("../models/friends.model");
 const mongoose = require("mongoose");
+
+const express = require("express");
+
 const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
 const SupportWrite = db.supportwrite;
+const multer = require('multer');
 // var Schema = mongoose.Schema;
 //     ObjectId = Schema.ObjectId;
 // const uploadFile = require("../middlewares/upload");
 
 let transport = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  //host: 'smtp.gmail.com',
   service: 'gmail', 
-  port: 2525,
+  //port: 2525,
   auth: {
-     user: 'pradeep.invite@gmail.com.com',
+     user: 'pradeep.invite@gmail.com',
      pass: '@dwitiya123'
   }
 });
@@ -50,22 +54,27 @@ User.findOne(req.params.username).then(data => {
 
 exports.completeProfile = (req, res) => {
 
-    first_name= req.body.first_name,
-    last_name=req.body.last_name,
-    user_id=req.body.user_id,
-    country= req.body.country,
-    email= req.body.email,
-    year_of_birth=req.body.year_of_birth,
-    mobile_number= req.body.mobile_number,
-    gender= req.body.gender,
-    street= req.body.street,
-    city= req.body.city,
-    state= req.body.state,
-    pin= req.body.pin
+    first_name= req.body.first_name;
+    last_name=req.body.last_name;
+    user_id=req.body.user_id;
+    country= req.body.country;
+    email= req.body.email;
+    year_of_birth=req.body.year_of_birth;
+    mobile_number= req.body.mobile_number;
+    gender= req.body.gender;
+    street= req.body.street;
+    city= req.body.city;
+    state= req.body.state;
+    pin= req.body.pin;
+    
     fav_genre=req.body.fav_genre;
-    profileimage="";
-    User.updateOne({_id: user_id}, {$set: {first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
-      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre, profileimage:profileimage   }}).then(data => {
+    if(req.files)
+
+    {
+    profile_image=req.file.filename;
+    console.log(profile_image);
+    User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
+      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre }}).then(data => {
        
       res.send(data);
       })
@@ -75,6 +84,22 @@ exports.completeProfile = (req, res) => {
             err.message || "Some error occurred while retrieving Users."
         });
       });
+    }
+    else{
+      profile_image="";
+      User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
+        mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre }}).then(data => {
+         
+        res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving Users."
+          });
+        });
+    }
+   
     
   
 
@@ -441,6 +466,29 @@ exports.showAllReportProblemsMessages = (req, res) => {
     });
 };
 
+exports.uploadProfileImage = (req, res) =>{
+
+//const upload = multer({dest:'uploads/'}).single("demo_image");
+
+// upload(req, res, (err) => {
+//   if(err) {
+//     res.status(400).send("Something went wrong!");
+//   }
+//   res.send(req.file);
+// });
+
+
+  var email = req.body.email;
+  var file = req.file.originalname;
+  console.log(file + " " + email);
+  if(req.file) {
+      res.json(req.file);
+      
+  }
+  else throw 'error';
+
+
+}
 
 exports.sendFriendInviteArray = (req, res) => {
 
