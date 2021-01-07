@@ -192,6 +192,8 @@ exports.signup = (req, res) => {
 // };
 
 exports.signin = (req, res) => {
+  console.log("req.body.username");
+  console.log(req.body.username);
   User.findOne({
     username: req.body.username
   }).then(user => {
