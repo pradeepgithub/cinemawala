@@ -194,15 +194,18 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
   console.log("req.body.username");
   console.log(req.body.username);
+  console.log(req.params.username);
+
+
   User.findOne({
-    username: req.body.username
+    username: req.params.username
   }).then(user => {
     
     console.log("In this");
     console.log(user);
 
     var passwordIsValid = bcrypt.compareSync(
-      req.body.password,
+      req.params.password,
       user.password
     );
  
