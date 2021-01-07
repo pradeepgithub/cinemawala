@@ -154,44 +154,91 @@ exports.signup = (req, res) => {
   });
 };
 
+// exports.signin = (req, res) => {
+//   User.findOne({
+//     username: req.body.username
+//   })
+//     .exec((err, user) => {
+//       if (err) {
+//         res.status(500).send({ message: err });
+//         return;
+//       }
+
+//      console.log(user);
+//       var passwordIsValid = bcrypt.compareSync(
+//         req.body.password,
+//         user.password
+//       );
+   
+    
+//       if (!passwordIsValid) {
+//         return res.status(401).send({
+//           accessToken: null,
+//           message: "Invalid Password!"
+//         });
+//       }
+
+//       var token = jwt.sign({ id: user.id }, config.secret, {
+//         expiresIn: 86400 // 24 hours
+//       });
+
+//       res.status(200).send({
+//         id: user._id,
+//         username: user.username,
+//         email: user.email,
+//         accessToken: token
+//       });
+//     });
+// };
+
 exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username
-  })
-    .exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-
-     console.log(user);
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-   
+  }).then(user => {
     
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
-
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // 24 hours
+    
+    var passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+ 
+  
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
       });
+    }
 
-      // console.log(token);
-
-
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        accessToken: token
-      });
+    var token = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: 86400 // 24 hours
     });
+
+    // console.log(token);
+
+
+    res.status(200).send({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accessToken: token
+    });
+    
+    
+    //res.json(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+  
+  
+  
+ 
+      
+    
 };
 
 
