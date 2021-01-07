@@ -193,8 +193,8 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
   console.log("req.body.username");
-  console.log(req.body.username);
-  console.log(req.params.username);
+  console.log(req.body);
+  console.log(req.params);
 
 
   User.findOne({
