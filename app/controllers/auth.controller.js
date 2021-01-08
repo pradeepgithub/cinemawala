@@ -192,20 +192,20 @@ exports.signup = (req, res) => {
 // };
 
 exports.signin = (req, res) => {
-  console.log("req.body.username");
-  console.log(req);
-  console.log(req.params);
+  //console.log("req.body.username");
+  // console.log(req);
+  //console.log(req.body);
 
 
   User.findOne({
-    username: req.params.username
+    username: req.body.username
   }).then(user => {
     
     console.log("In this");
     console.log(user);
 
     var passwordIsValid = bcrypt.compareSync(
-      req.params.password,
+      req.body.password,
       user.password
     );
  
@@ -224,15 +224,15 @@ exports.signin = (req, res) => {
     // console.log(token);
 
 
-    res.status(200).send({
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      accessToken: token
-    });
+    // res.status(200).send({
+    //   id: user._id,
+    //   username: user.username,
+    //   email: user.email,
+    //   accessToken: token
+    // });
     
     
-    //res.json(data);
+    res.send(user);
   })
   .catch(err => {
     res.status(500).send({
