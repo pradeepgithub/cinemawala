@@ -12,6 +12,8 @@ const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
 const SupportWrite = db.supportwrite;
+const Country = db.country;
+
 const multer = require('multer');
 // var Schema = mongoose.Schema;
 //     ObjectId = Schema.ObjectId;
@@ -548,19 +550,50 @@ var smobilenumber=req.body.sender_mobile_number;
 };
 
 
+exports.listCountries = (req, res) => {
+  // const first_name = req.query.first_name;
+  // var condition = first_name ? { first_name: { $regex: new RegExp(first_name), $options: "i" } } : {};
 
+  Country.find()
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
 
-// "user_id":"5fdc8e7911ce7509c847617c",
-//     "first_name": "Pradeep",
-//      "last_name": "Verma",
-//       "mobile_number": "9926619949",
-//        "gender": "male",
-//        "country": "91",
-//         "username": "pverma",
-//          "email": "pradeep@gmail.com",
-//         "year_of_birth":"1980", 
-//      "street":"street", 
-//      "city":"city", 
-//      "state":"state", 
-//      "pin":"9926619949",
-//      "fav_genre":"Crime, Thriller"   
+exports.getCountryDialCode = (req, res) => {
+ const countryname = req.body.countryname;
+ var condition = countryname ? { countryname: { $regex: new RegExp(countryname), $options: "i" } } : {};
+
+  Country.find({countryname:countryname})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
+
+exports.getCountryName = (req, res) => {
+  const dial_code = req.body.dial_code;
+  var condition = dial_code ? { dial_code: { $regex: new RegExp(dial_code), $options: "i" } } : {};
+ 
+   Country.find({dial_code:dial_code})
+     .then(data => {
+       res.send(data);
+     })
+     .catch(err => {
+       res.status(500).send({
+         message:
+           err.message || "Some error occurred while retrieving Users."
+       });
+     });
+ };

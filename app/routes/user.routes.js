@@ -47,5 +47,9 @@ module.exports = function(app) {
  // app.post("/api/user/uploadprofileimage",  controller.uploadProfileImage);
 
   app.post('/api/user/uploadprofileimage', upload.single('demo_image'), controller.uploadProfileImage);
+
+  app.get('/api/user/listcountries', controller.listCountries);
+  app.post('/api/user/getcountrycialcode', controller.getCountryDialCode);
+  app.post('/api/user/getcountryname', controller.getCountryName);
   
 };

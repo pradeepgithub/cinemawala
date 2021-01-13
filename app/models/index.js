@@ -14,6 +14,7 @@ db.myfev_movie = require("./myfev_movies.model");
 db.vote_schedule = require("./vote_schedule.model");
 db.supportwrite = require("./supportwrite.model");
 db.watched_by=  require("./watched_by.model");
+db.country=  require("./countries.model");
 db.ROLES = ["user", "admin", "moderator", "maker"];
 
 module.exports = db;
