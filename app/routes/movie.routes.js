@@ -21,20 +21,20 @@ module.exports = function(app) {
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
-  app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
+  app.get("/api/movie/myprojectslist", [authJwt.verifyToken], moviecontroller.myProjectsList);
   //Movie Crew
-  app.post("/api/movie/updatemoviecrew", moviecontroller.addMovieCrew);
-  app.post("/api/movie/addmoviecrew", moviecontroller.addMovieCrew);
-  app.get("/api/movie/listmoviecrew", moviecontroller.listMovieCrew);
-  app.post("/api/movie/acceptmoviecrew", moviecontroller.acceptRejectCrew);
+  app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
+  app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);
+  app.get("/api/movie/listmoviecrew",  moviecontroller.listMovieCrew);
+  app.post("/api/movie/acceptmoviecrew", [authJwt.verifyToken], moviecontroller.acceptRejectCrew);
 
   //Movie Watch
-  app.post("/api/movie/addmoviewatch", moviecontroller.addMovieWatch);
+  app.post("/api/movie/addmoviewatch", [authJwt.verifyToken], moviecontroller.addMovieWatch);
   app.get("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
   
 
   //Movie Ratings
-  app.post("/api/movie/addmovierating", moviecontroller.addMovieRating);
+  app.post("/api/movie/addmovierating", [authJwt.verifyToken], moviecontroller.addMovieRating);
   app.get("/api/movie/listmovierating", moviecontroller.listMovieRating);
   app.get("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
 
@@ -55,28 +55,28 @@ module.exports = function(app) {
   app.get("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
 
   
-  app.post("/api/movie/reschedule",    moviecontroller.reScheduleMovie);
-  app.post("/api/movie/delschedule",   moviecontroller.delScheduleMovie);
+  app.post("/api/movie/reschedule", [authJwt.verifyToken],   moviecontroller.reScheduleMovie);
+  app.post("/api/movie/delschedule", [authJwt.verifyToken],   moviecontroller.delScheduleMovie);
 
   //Schedules with me by others
   app.get("/api/movie/listscheduleswithme", moviecontroller.listMovieSchedulesWithMe);
   app.post("/api/movie/listschedulesbyme", moviecontroller.listMovieSchedulesByMe);
-  app.post("/api/movie/updatescheduleswithme", moviecontroller.statusUpdateMovieSchedulesWithMe);
+  app.post("/api/movie/updatescheduleswithme", [authJwt.verifyToken], moviecontroller.statusUpdateMovieSchedulesWithMe);
 
   //Add Friends to Schedules
-  app.post("/api/movie/addfriendstoschedule", moviecontroller.addFriendsToScheduleMovie);
-  app.post("/api/movie/addfriendstoschedulearray", moviecontroller.addFriendsToScheduleMovieArray);
-  app.post("/api/movie/delfriendsfromschedule",  moviecontroller.delFriendsFromScheduleMovie);
+  app.post("/api/movie/addfriendstoschedule", [authJwt.verifyToken], moviecontroller.addFriendsToScheduleMovie);
+  app.post("/api/movie/addfriendstoschedulearray", [authJwt.verifyToken], moviecontroller.addFriendsToScheduleMovieArray);
+  app.post("/api/movie/delfriendsfromschedule", [authJwt.verifyToken], moviecontroller.delFriendsFromScheduleMovie);
   app.post("/api/movie/listscheduledfriendsbymovie", moviecontroller.listScheduledFriendsByMovie);
 
   //Fevourite Movie
-  app.post("/api/movie/addfevmovie",   moviecontroller.addMyFebMovie);
+  app.post("/api/movie/addfevmovie", [authJwt.verifyToken],  moviecontroller.addMyFebMovie);
   app.post("/api/movie/listmyfevmovie", moviecontroller.listMyFevMovies);
-  app.post("/api/movie/delmyfevmovie", moviecontroller.deleteMyFevMovies);
+  app.post("/api/movie/delmyfevmovie",[authJwt.verifyToken], moviecontroller.deleteMyFevMovies);
 
   //Vote for Schedules
-  app.post("/api/movie/sendvoteforschedule",  moviecontroller.sendVoteForScheduleMovie);
-  app.post("/api/movie/addvoteforschedule", moviecontroller.addVoteForScheduleMovie);
+  app.post("/api/movie/sendvoteforschedule", [authJwt.verifyToken], moviecontroller.sendVoteForScheduleMovie);
+  app.post("/api/movie/addvoteforschedule",[authJwt.verifyToken], moviecontroller.addVoteForScheduleMovie);
   app.post("/api/movie/listvoteformovieschedule", moviecontroller.listVoteForScheduleMovies);
 
   app.post("/api/movie/myagree",  moviecontroller.showAgree);

@@ -17,7 +17,7 @@ module.exports = function(app) {
 
   app.get("/api/user/otp", otpcontroller.sendOTP);  
   app.get("/api/user/verifyotp", otpcontroller.verifyOTP);
-  app.post("/api/user/changepassword", [authJwt.verifyToken], controller.changepassword);
+  app.post("/api/user/changepassword", controller.changepassword);
   
   app.get("/api/user/listallusers",  controller.listAll);
   app.get("/api/user/listallmakers",  controller.findMakerAll);
