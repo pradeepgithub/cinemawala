@@ -27,7 +27,7 @@ exports.findAll = (req, res) => {
 
 exports.moviePreRoll = (req, res) =>{
   const country = req.body.country;
-  //const added_by = req.body.added_by;
+  console.log("Current directory:", __dirname); 
   var root = path.dirname(require.main.filename);
   
   var absolutePath = path.join(root,"/uploads/Projectorisloading.mp4") 
