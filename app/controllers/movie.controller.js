@@ -34,7 +34,7 @@ exports.moviePreRoll = (req, res) =>{
 console.log("Hello" + absolutePath)
   console.log(root);
   data=  "https://cinemawala-12696.nodechef.com/uploads/Projectorisloading.mp4"
-  res.send(data);
+  res.send(absolutePath);
 
 }
 
