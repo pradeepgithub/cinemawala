@@ -7,6 +7,7 @@ const ScheduledMovie = db.scheduledmovie;
 const MyFev_Movie = db.myfev_movie;
 const VoteForScheduledMovie = db.vote_schedule;
 const WatchedBy = db.watched_by;
+const util = require("util");
 
 exports.findAll = (req, res) => {
     const movie_name = req.body.movie_name;
@@ -24,6 +25,13 @@ exports.findAll = (req, res) => {
       });
 };
 
+exports.moviePreRoll = (req, res) =>{
+  const country = req.body.country;
+  //const added_by = req.body.added_by;
+  data=  "https://cinemawala-12696.nodechef.com/uploads/Projectorisloading.mp4"
+  res.send(data);
+
+}
 
 exports.myProjectsList = (req, res) => {
   const added_by = req.body.added_by;

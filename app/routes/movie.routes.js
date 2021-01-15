@@ -86,6 +86,6 @@ module.exports = function(app) {
   app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
   app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
   
-  
+  app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
 
 }
