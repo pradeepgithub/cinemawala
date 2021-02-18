@@ -24,7 +24,7 @@ module.exports = function(app) {
   app.get("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
   app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
   app.post("/api/user/updateprofilewithimage", upload.single('profile_image'), controller.completeProfile);
-
+  app.post("/api/user/profiles", controller.showProfile);
 
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
   //sending multiple invites

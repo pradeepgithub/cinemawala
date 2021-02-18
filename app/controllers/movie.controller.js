@@ -27,14 +27,11 @@ exports.findAll = (req, res) => {
 
 exports.moviePreRoll = (req, res) =>{
   const country = req.body.country;
-  console.log("Current directory:", __dirname); 
-  var root = path.dirname(require.main.filename);
-  
+  const path = require("path")
+  var root = path.dirname(__dirname);
   var absolutePath = path.join(root,"/uploads/Projectorisloading.mp4") 
-console.log("Hello" + absolutePath)
-  console.log(root);
-  data=  "https://cinemawala-12696.nodechef.com/uploads/Projectorisloading.mp4"
-  res.send(absolutePath);
+  data =absolutePath;
+  res.send(data);
 
 }
 
