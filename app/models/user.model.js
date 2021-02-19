@@ -9,6 +9,7 @@ const User = mongoose.model(
     email: String,
     password: String,
     country: String,
+    country_name:String,
     mobile_number:String,
     gender:String,
     year_of_birth:String,
@@ -20,16 +21,12 @@ const User = mongoose.model(
     fav_genre:String,
     is_maker:Boolean,
     profile_image:String,
-   
-
+    film_school_name:String,
+    film_course_name:String,
+    film_school_year:String,
+    film_school_country:String,
+    is_active:Boolean,
   })
 );
 
 module.exports = User;
-
-// roles: [
-//   {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Role"
-//   }
-// ],

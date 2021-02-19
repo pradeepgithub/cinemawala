@@ -21,7 +21,8 @@ module.exports = function(app) {
   app.get("/api/movie/all", moviecontroller.findAll);
   app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.get("/api/movie/details", moviecontroller.findOneById);
-  app.get("/api/movie/myprojectslist", [authJwt.verifyToken], moviecontroller.myProjectsList);
+  app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
+  app.post("/api/movie/myprojectslists", moviecontroller.myProjectsList);
   //Movie Crew
   app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);

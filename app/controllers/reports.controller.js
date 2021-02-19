@@ -33,20 +33,20 @@ exports.showReportsUserCountryWise= (req, res) => {
           }},
         
           {$project: {"_id":0, "country":"$_id.country","gender":"$_id.gender", "count":"$userCount"  }},
-          { "$sort": { "count": -1 } },
-          {
-            $bucket:
-            {
-                groupBy : {$toInt: "$country" }, 
-                boundaries:cc, 
-                default:"other", 
-                output : 
-                    {
-                        "total" : {$sum : 1}, 
-                        "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "male" ] }, then: 1, else: 0 }}},
-                        "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "female" ] }, then: 1, else: 0 }}}  }
-                    }
-            }
+          // // { "$sort": { "count": -1 } },
+          // {
+          //   $bucket:
+          //   {
+          //       groupBy : {$toInt: "$country" }, 
+          //       boundaries:cc, 
+          //       default:"other", 
+          //       output : 
+          //           {
+          //               "total" : {$sum : 1}, 
+          //               "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: 1, else: 0 }}},
+          //               "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: 1, else: 0 }}}  }
+          //           }
+          //   }
   
          
       ])

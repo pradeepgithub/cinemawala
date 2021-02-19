@@ -16,7 +16,7 @@ const Country = db.country;
 
 const multer = require('multer');
 // var Schema = mongoose.Schema;
-//     ObjectId = Schema.ObjectId;
+//ObjectId = Schema.ObjectId;
 // const uploadFile = require("../middlewares/upload");
 
 let transport = nodemailer.createTransport({
@@ -68,15 +68,21 @@ exports.completeProfile = (req, res) => {
     city= req.body.city;
     state= req.body.state;
     pin= req.body.pin;
-    
+    country_name = req.body.country_name;
+    film_school_name=req.body.film_school_name;
+    film_course_name=req.body.film_course_name;
+    film_school_year=req.body.film_school_year;
+    film_school_country=req.body.film_school_country;
     fav_genre=req.body.fav_genre;
     if(req.files)
 
     {
     profile_image=req.file.filename;
     console.log(profile_image);
-    User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
-      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre }}).then(data => {
+    User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
+      year_of_birth:year_of_birth, 
+      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
+      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country }}).then(data => {
        
       res.send(data);
       })
@@ -89,8 +95,10 @@ exports.completeProfile = (req, res) => {
     }
     else{
       profile_image="";
-      User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, year_of_birth:year_of_birth, 
-        mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, fav_genre:fav_genre }}).then(data => {
+      User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
+        year_of_birth:year_of_birth, 
+        mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
+        fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country }}).then(data => {
          
         res.send(data);
         })
@@ -130,8 +138,32 @@ exports.findAll = (req, res) => {
 
 
 exports.findMakerAll = (req, res) => {
+
+  var usertype = req.query.usertype;
+  var status = req.query.status;
+  
+  var is_maker=false;
+  is_active = true;
+
+  if(usertype == 'Watcher')
+  {
+    is_maker = false;
+    console.log("Not Maker");
+  }
+  else
+  {
+    is_maker=true;
+    console.log("Maker");
+  }
+if(status == 'pending')
+{
+  is_active = false;
+}
+else{
+  is_active = true;
+}
   User.find(
-    { is_maker:true   } )
+    { is_maker:is_maker, is_active: is_active } )
     .then(data => {
       res.send(data);
     })
