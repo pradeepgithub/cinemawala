@@ -18,6 +18,8 @@ module.exports = function(app) {
   app.get("/api/user/otp", otpcontroller.sendOTP);  
   app.get("/api/user/verifyotp", otpcontroller.verifyOTP);
   app.post("/api/user/changepassword", controller.changepassword);
+  app.post("/api/user/changeStatus", controller.changeStatus);
+  
   
   app.get("/api/user/listallusers",  controller.listAll);
   app.get("/api/user/listallmakers",  controller.findMakerAll);
@@ -34,7 +36,7 @@ module.exports = function(app) {
   app.post("/api/user/acceptrejectinvite", controller.acceptRejectFriendsInvite);
   app.get("/api/user/showsentinvite",  controller.showFriendInviteSent);
   app.get("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
-  app.get("/api/user/showmyfriends",  controller.showFriends);
+  app.post("/api/user/showmyfriends",  controller.showFriends);
   app.post("/api/user/unfriend", controller.unFriends);
 
 

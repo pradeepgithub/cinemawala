@@ -32,22 +32,23 @@ exports.showReportsUserCountryWise= (req, res) => {
               "userCount": { "$sum": 1 }
           }},
         
-          {$project: {"_id":0, "country":"$_id.country","gender":"$_id.gender", "count":"$userCount"  }},
-          // // { "$sort": { "count": -1 } },
-          // {
-          //   $bucket:
-          //   {
-          //       groupBy : {$toInt: "$country" }, 
-          //       boundaries:cc, 
-          //       default:"other", 
-          //       output : 
-          //           {
-          //               "total" : {$sum : 1}, 
-          //               "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: 1, else: 0 }}},
-          //               "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: 1, else: 0 }}}  }
-          //           }
-          //   }
+          {$project: {"_id":0, "country":"$_id.country", "country_name":"$_id.country_name","gender":"$_id.gender", "count":"$userCount"  }},
+          // { "$sort": { "count": -1 } },
+          {
+            $bucket:
+            {
+                groupBy : {$toInt: "$country" }, 
+                boundaries:cc, 
+                default:"other", 
+                output : 
+                    {
+                        "total" : {$sum : 1}, 
+                        "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: 1, else: 0 }}},
+                        "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: 1, else: 0 }}}  }
+                    }
+            }
   
+         
          
       ])
       
@@ -56,7 +57,6 @@ exports.showReportsUserCountryWise= (req, res) => {
             res.send(data);
           })
           .catch(err => {
-            console.log("Rrrr");
             res.status(500).send({
               message:
                 err.message || "Some error occurred while retrieving Users."
@@ -64,6 +64,35 @@ exports.showReportsUserCountryWise= (req, res) => {
           });
       }
   
+
+      exports.showReportsUserCountryCount= (req, res) => {
+            User.aggregate([
+              { "$group": {
+                  "_id": {
+                    "country_name":"$country_name",
+                  },
+                  "userCount": { "$sum": 1 }
+              }},
+   
+              {$project: {"_id":0, "country_name":"$_id.country_name", "count":"$userCount"  }},
+            
+          ])
+          
+          
+            .then(data => {
+              //console.log("this ius called");
+                res.send(data);
+              })
+              .catch(err => {
+                res.status(500).send({
+                  message:
+                    err.message || "Some error occurred while retrieving Users."
+                });
+              });
+
+     
+          }
+      
 exports.showReportsUserAgeWise= (req, res) => {
     //User report country wise
         User.aggregate([
@@ -106,7 +135,7 @@ exports.showReportsUserAgeWise= (req, res) => {
             res.send(data);
           })
           .catch(err => {
-            console.log("Rrrr");
+           // console.log("Rrrr");
             res.status(500).send({
               message:
                 err.message || "Some error occurred while retrieving Users."
@@ -158,7 +187,7 @@ exports.showReportsMovieWachedByGenders = (req, res) => {
  res.send(data);
            })
            .catch(err => {
-             console.log("Rrrr");
+            // console.log("Rrrr");
              res.status(500).send({
                message:
                  err.message || "Some error occurred while retrieving Users."
@@ -212,7 +241,7 @@ exports.showReportsMovieWachedByGenre = (req, res) => {
 res.send(data);
        })
        .catch(err => {
-         console.log("Rrrr");
+        // console.log("Rrrr");
          res.status(500).send({
            message:
              err.message || "Some error occurred while retrieving Users."

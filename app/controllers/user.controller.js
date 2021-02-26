@@ -30,17 +30,6 @@ let transport = nodemailer.createTransport({
 });
 
 exports.showProfile = (req, res) => {
-//   User.findOne(req.params.username)
-//   .select('username first_name last_name, email, country, mobile_number, gender, year_of_birth, pin')
-//   .exec(function(err, doc){
-//     if(err || doc === null){
-//       res.status(404).json({error: 'PersonNotFound'});
-//     } else {
-//       // res.json(doc);
-//       res.send(doc);
-//     }
-// });
- 
 User.findOne(req.params.username).then(data => {
   res.json(data);
 })
@@ -78,7 +67,6 @@ exports.completeProfile = (req, res) => {
 
     {
     profile_image=req.file.filename;
-    console.log(profile_image);
     User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
       year_of_birth:year_of_birth, 
       mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
@@ -148,12 +136,12 @@ exports.findMakerAll = (req, res) => {
   if(usertype == 'Watcher')
   {
     is_maker = false;
-    console.log("Not Maker");
+    //console.log("Not Maker");
   }
   else
   {
     is_maker=true;
-    console.log("Maker");
+    //console.log("Maker");
   }
 if(status == 'pending')
 {
@@ -221,7 +209,6 @@ exports.sendFriendInvite = (req, res) => {
 
   const fid= req.body.friend_id;
 var idarrays = fid.split(','); 
-console.log(idarrays);
   User.findOne({_id:fid})
   
   .exec(function(err, doc){
@@ -311,7 +298,6 @@ exports.unFriends = (req, res) => {
 const uid= req.body.user_id;
 const fid= req.body.friend_id;
 var idarrays = fid.split(','); 
-
   Friend.remove({$and:[{$or:[{user_id: fid},{friend_id:fid}]},{$or:[{user_id: uid},{friend_id:uid}]}]}).then(data => {
     res.send(data);
   })
@@ -321,9 +307,6 @@ var idarrays = fid.split(',');
         err.message || "Some error occurred while retrieving Users."
     });
   });
-
-
-
 };
 
 
@@ -333,9 +316,7 @@ exports.showFriends = (req, res) => {
 const user_id = req.body.user_id;
 const mobile_number = req.body.mobile_number;
 var arr = [];
-
 Friend.find({
- 
   $or: [{ friend_id: user_id }, { user_id: user_id }], status:1
   }, {}).then(data => {
     data.forEach(element => {
@@ -344,7 +325,6 @@ Friend.find({
         arr.push(element.friend_id);
       }
     });
-
     User.find({_id:{$in:arr}})
     .exec(function(err, doc){
       if(err || doc === null){
@@ -388,6 +368,24 @@ exports.acceptRejectFriendsInvite = (req, res) => {
 
 
 
+exports.changeStatus = (req, res) => {
+
+  const uid= req.body.id;
+  const is_active_status= req.body.is_active;
+
+  User.updateOne({_id: uid}, {$set: { is_active:is_active_status }}).then(data => {
+    res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+   
+  };
+
+  
 exports.writeToUs = (req, res) => {
 
   const uid= req.body.user_id;
@@ -535,9 +533,7 @@ var smobilenumber=req.body.sender_mobile_number;
     data.forEach(doc => {
       if(doc._id !=="")
       {
-        
-
-                      const invite = new Friend({
+                        const invite = new Friend({
                         user_id: uid,
                         friend_id: doc._id,
                         username:doc.username,

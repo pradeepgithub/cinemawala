@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const opts = { toJSON: { virtuals: true } };
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
@@ -26,7 +26,7 @@ const User = mongoose.model(
     film_school_year:String,
     film_school_country:String,
     is_active:Boolean,
-  })
+  }, opts)
 );
 
 module.exports = User;

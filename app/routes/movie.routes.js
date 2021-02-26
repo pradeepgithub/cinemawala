@@ -23,6 +23,7 @@ module.exports = function(app) {
   app.get("/api/movie/details", moviecontroller.findOneById);
   app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
   app.post("/api/movie/myprojectslists", moviecontroller.myProjectsList);
+  app.post("/api/movie/details", moviecontroller.findOneById);
   //Movie Crew
   app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);
@@ -86,6 +87,10 @@ module.exports = function(app) {
   app.post("/api/reports/showreportsusercountrywise",  reportscontroller.showReportsUserCountryWise);
   app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
   app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
+  app.get("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
+  app.get("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
+  app.get("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
+  app.get("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
   
   app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
 

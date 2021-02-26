@@ -12,7 +12,6 @@ const path = require('path');
 exports.findAll = (req, res) => {
     const movie_name = req.body.movie_name;
     var condition = movie_name ? { movie_name: { $regex: new RegExp(movie_name), $options: "i" } } : {};
-  //  Movie.createIndex( { actors: "text" } )
     Movie.find()
       .then(data => {
           res.send(data);
@@ -218,7 +217,6 @@ exports.acceptRejectCrew = (req, res) => {
    
     Movie.update({ _id: id},   {$push: {"crew":{name:crew_name, role:role, email:email, status:status}}})
           .then(data => {
-            console.log(id);
             res.send(data);
           })
           .catch(err => {
@@ -289,18 +287,6 @@ exports.addMovieWatch = (req, res) => {
 exports.listMovieWatchByUser = (req, res) => {
 
   var id=req.body.user_id;
-
-  // WatchedBy.aggregate([
-  //   {$match:{user_id:id}},
-    // { "$project": { "movieid": { "$toObjectId": "$movie_id" } } },
-  //   { "$lookup": {
-  //     "localField": "title",
-  //     "from": "movies",
-  //     "foreignField": "title",
-  //     "as": "movieDetails"
-  //   }}
-  // ])
-
 
   WatchedBy.find({user_id:id}).then(data => {
     res.send(data);
@@ -418,7 +404,7 @@ exports.listMoviesSpecial = (req, res) => {
       res.send(data);
     })
     .catch(err => {
-      console.log("Rrrr");
+      // console.log("Rrrr");
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Users."
@@ -458,11 +444,12 @@ schedule.save((err, schedule) => {
     data.forEach(doc => {
       if(doc._id !=="")
       {
-          //
+          console.log(doc);
           ScheduledMovie.update({_id: scheduled_id}, {"$push": {
             "scheduled_with":{
               "friend_name":doc.first_name + ' ' + doc.last_name,
               "friend_id":doc._id,
+              "email": doc.email,
               "status":0
           }
           }}, {multi: true})
@@ -489,6 +476,7 @@ exports.addFriendsToScheduleMovie = (req, res) => {
     "scheduled_with":{
       "friend_name":req.body.friend_name,
       "friend_id":req.body.friend_id,
+      "email":req.body.email,
       "status":0
   }
   }}, {multi: true})
@@ -496,7 +484,7 @@ exports.addFriendsToScheduleMovie = (req, res) => {
     res.send(data);
   })
   .catch(err => {
-    console.log("Rrrr");
+
     res.status(500).send({
       message:
         err.message || "Some error occurred while scheduling users."
@@ -510,7 +498,7 @@ const fids= req.body.friend_id;
 var id = fids.split(", ");
 var uid=req.body.user_id;
 var scheduled_id=req.body.scheduled_id;
-console.log(id);
+//console.log(id);
   User.find({_id: { $in: id }}).then(data => {
    
         data.forEach(doc => {
@@ -548,7 +536,7 @@ exports.delFriendsFromScheduleMovie = (req, res) => {
     res.send(data);
   })
   .catch(err => {
-    console.log("Rrrr");
+  
     res.status(500).send({
       message:
         err.message || "Some error occurred while scheduling users."
@@ -568,7 +556,7 @@ exports.reScheduleMovie = (req, res) => {
     res.send(data);
  })
  .catch(err => {
-   console.log("Rrrr");
+
    res.status(500).send({
      message:
        err.message || "Some error occurred while retrieving Users."
@@ -589,7 +577,7 @@ exports.delScheduleMovie = (req, res) => {
     res.send(data);
  })
  .catch(err => {
-   console.log("Rrrr");
+  
    res.status(500).send({
      message:
        err.message || "Some error occurred while retrieving Users."
@@ -607,7 +595,7 @@ exports.listMovieSchedules = (req, res) => {
       res.send(data);
     })
     .catch(err => {
-      console.log("Rrrr");
+    
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Users."
@@ -620,11 +608,11 @@ exports.listMovieSchedulesByMe = (req, res) => {
  console.log(req.body.scheduled_by);
   ScheduledMovie.find({scheduled_by:req.body.scheduled_by})
     .then(data => {
-      console.log("dsfds");
+     
       res.send(data);
     })
     .catch(err => {
-      console.log("Rrrr");
+     
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Users."
@@ -653,7 +641,7 @@ exports.listScheduledFriendsByMovie = (req, res) => {
       res.send(data);
     })
     .catch(err => {
-      console.log("Rrrr");
+    
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Users."
@@ -666,12 +654,10 @@ exports.listMovieSchedulesWithMe = (req, res) => {
   var id=req.body.friend_id;
   ScheduledMovie.find({ "scheduled_with" : { "$elemMatch" : { "friend_id" : id} }})
     .then(data => {
-      console.log("dsfds");
-      res.send(data);
+       res.send(data);
     })
     .catch(err => {
-      console.log("Rrrr");
-      res.status(500).send({
+       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Users."
       });
@@ -908,7 +894,6 @@ exports.addMyFebMovie = (req, res) => {
 };
 
 exports.showAgree = (req, res) => {
- 
     const scheduled_by = req.body.scheduled_by;
     const title= req.body.title;
     ScheduledMovie.find(
@@ -934,11 +919,49 @@ exports.showAgree = (req, res) => {
 
 
 
+exports.showMakerCount= (req, res) => {
+User.count()
+  .then(data => {
+    res.json(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
 
+
+}
+exports.showWatcherCount= (req, res) => {
+  User.count()
+    .then(data => {
+      res.json(data)
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
     
-
+  }
+    
+  exports.showMovieCount= (req, res) => {
+    Movie.count()
+      .then(data => {
+        res.json(data)
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving Users."
+          });
+        });
+      
+    }
+      
 exports.showReports= (req, res) => {
-
   WatchedBy.aggregate([
     {$match: {"users.gender":{$ne: ""}}},
    { "$project": { "user_id": { "$toObjectId": "$user_id"},title:1 } },
@@ -954,20 +977,11 @@ exports.showReports= (req, res) => {
       "Watched_by.gender":1
      } },
 
-     
-
-     
-
-     {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
+    {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
    
     {$project: {"_id":0, "title":"$_id.title",gender:{ $toString: "$_id.gender" } , count:"$totalPerson"  }},
 
-
-  
-   
   ])
-
-
   .then(data => {
       res.send(data);
     })

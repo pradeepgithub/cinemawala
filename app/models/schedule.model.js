@@ -14,6 +14,7 @@ const ScheduledMovie = mongoose.model(
                 {
                 friend_name: String,
                 friend_id: String,
+                email:String,
                 status:Boolean
                }
                      
