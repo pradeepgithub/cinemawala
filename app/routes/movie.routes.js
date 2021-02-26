@@ -23,7 +23,7 @@ module.exports = function(app) {
   app.get("/api/movie/details", moviecontroller.findOneById);
   app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
   app.post("/api/movie/myprojectslists", moviecontroller.myProjectsList);
-  app.post("/api/movie/details", moviecontroller.findOneById);
+  app.post("/api/movie/moviedetails", moviecontroller.findOneById);
   //Movie Crew
   app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);
