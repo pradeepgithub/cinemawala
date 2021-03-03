@@ -5,9 +5,7 @@ var bcrypt = require("bcryptjs");
 const Friends = require("../models/friends.model");
 const { schema } = require("../models/friends.model");
 const mongoose = require("mongoose");
-
 const express = require("express");
-
 const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
@@ -15,10 +13,6 @@ const SupportWrite = db.supportwrite;
 const Country = db.country;
 
 const multer = require('multer');
-// var Schema = mongoose.Schema;
-//ObjectId = Schema.ObjectId;
-// const uploadFile = require("../middlewares/upload");
-
 let transport = nodemailer.createTransport({
   //host: 'smtp.gmail.com',
   service: 'gmail', 
@@ -62,6 +56,8 @@ exports.completeProfile = (req, res) => {
     film_course_name=req.body.film_course_name;
     film_school_year=req.body.film_school_year;
     film_school_country=req.body.film_school_country;
+    imdb_no=req.body.imdb_no;
+    imdb_url=req.body.imdb_url;
     fav_genre=req.body.fav_genre;
     if(req.files)
 
@@ -70,7 +66,9 @@ exports.completeProfile = (req, res) => {
     User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
       year_of_birth:year_of_birth, 
       mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country }}).then(data => {
+      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, 
+      film_school_year:film_school_year, film_school_country:film_school_country,
+      imdb_no:imdb_no, imdb_url:imdb_url }}).then(data => {
        
       res.send(data);
       })
@@ -86,7 +84,8 @@ exports.completeProfile = (req, res) => {
       User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
         year_of_birth:year_of_birth, 
         mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-        fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country }}).then(data => {
+        fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country,
+        imdb_no:imdb_no, imdb_url:imdb_url }}).then(data => {
          
         res.send(data);
         })
@@ -136,12 +135,10 @@ exports.findMakerAll = (req, res) => {
   if(usertype == 'Watcher')
   {
     is_maker = false;
-    //console.log("Not Maker");
   }
   else
   {
     is_maker=true;
-    //console.log("Maker");
   }
 if(status == 'pending')
 {

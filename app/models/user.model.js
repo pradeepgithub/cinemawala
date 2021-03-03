@@ -25,6 +25,8 @@ const User = mongoose.model(
     film_course_name:String,
     film_school_year:String,
     film_school_country:String,
+    imdb_no:String,
+    imdb_url:String,
     is_active:Boolean,
   }, opts)
 );

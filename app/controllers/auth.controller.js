@@ -29,7 +29,9 @@ exports.signup = (req, res) => {
     film_school_name:'',
     film_course_name:'',
     film_school_year:'',
-    film_school_country:'',
+    film_school_country:'', 
+    imdb_no:'',
+    imdb_url:'',
     is_active:false,
     
   });
