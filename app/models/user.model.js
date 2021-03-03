@@ -28,6 +28,8 @@ const User = mongoose.model(
     imdb_no:String,
     imdb_url:String,
     is_active:Boolean,
+    is_viewer_msg_blocked:Boolean,
+    is_maker_msg_blocked:Boolean,
   }, opts)
 );
 

@@ -24,7 +24,8 @@ let transport = nodemailer.createTransport({
 });
 
 exports.showProfile = (req, res) => {
-User.findOne(req.params.username).then(data => {
+ // console.log(req.body.username);
+User.findOne({username: req.body.username}).then(data => {
   res.json(data);
 })
 .catch(err => {
@@ -59,6 +60,9 @@ exports.completeProfile = (req, res) => {
     imdb_no=req.body.imdb_no;
     imdb_url=req.body.imdb_url;
     fav_genre=req.body.fav_genre;
+    is_viewer_msg_blocked=req.body.is_viewer_msg_blocked;
+    is_maker_msg_blocked=req.body.is_maker_msg_blocked;
+    console.log(req.body.is_maker_msg_blocked);
     if(req.files)
 
     {
@@ -68,7 +72,7 @@ exports.completeProfile = (req, res) => {
       mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
       fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, 
       film_school_year:film_school_year, film_school_country:film_school_country,
-      imdb_no:imdb_no, imdb_url:imdb_url }}).then(data => {
+      imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked }}).then(data => {
        
       res.send(data);
       })
@@ -85,7 +89,7 @@ exports.completeProfile = (req, res) => {
         year_of_birth:year_of_birth, 
         mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
         fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country,
-        imdb_no:imdb_no, imdb_url:imdb_url }}).then(data => {
+        imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked  }}).then(data => {
          
         res.send(data);
         })

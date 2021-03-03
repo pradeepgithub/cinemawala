@@ -32,6 +32,8 @@ exports.signup = (req, res) => {
     film_school_country:'', 
     imdb_no:'',
     imdb_url:'',
+    is_viewer_msg_blocked:0,
+    is_maker_msg_blocked:0,
     is_active:false,
     
   });
