@@ -55,7 +55,8 @@ module.exports = function(app) {
   
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
   app.get("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
-
+  app.post("/api/movie/delmovie", [authJwt.verifyToken],   moviecontroller.delMovie);
+  
   
   app.post("/api/movie/reschedule", [authJwt.verifyToken],   moviecontroller.reScheduleMovie);
   app.post("/api/movie/delschedule", [authJwt.verifyToken],   moviecontroller.delScheduleMovie);

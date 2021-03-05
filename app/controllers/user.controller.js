@@ -130,8 +130,8 @@ exports.findAll = (req, res) => {
 
 exports.findMakerAll = (req, res) => {
 
-  var usertype = req.query.usertype;
-  var status = req.query.status;
+  var usertype = req.body.usertype;
+  var status = req.body.status;
   
   var is_maker=false;
   is_active = true;
@@ -152,7 +152,7 @@ else{
   is_active = true;
 }
   User.find(
-    { is_maker:is_maker, is_active: is_active } )
+    { is_maker:is_maker, is_admin: false} )
     .then(data => {
       res.send(data);
     })
@@ -167,7 +167,7 @@ else{
 
 exports.listAll = (req, res) => {
   
-  User.find()
+  User.find({is_admin: false })
     .then(data => {
       res.send(data);
     })
