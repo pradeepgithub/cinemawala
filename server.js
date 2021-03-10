@@ -75,6 +75,28 @@ db.mongoose
   }
 
 
+  
+ app.post('/pay', async (request, response) => {
+  try {
+    console.log("OK");
+    // Create the PaymentIntent
+    let intent = await stripe.paymentIntents.create({
+      payment_method: request.body.payment_method_id,
+      description: "Test payment",
+      amount: request.body.amount * 100,
+      currency: 'inr',
+      confirmation_method: 'manual',
+      confirm: true
+    });
+    // Send the response to the client
+    response.send(generateResponse(intent));
+  } catch (e) {
+    // Display error on client
+    return response.send({ error: e.message });
+  }
+});
+
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to movie users application." });

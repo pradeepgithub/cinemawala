@@ -792,12 +792,7 @@ var id = fids.split(", ");
     scheduled_date: req.body.scheduled_date,
     scheduled_time: req.body.scheduled_time,
     type_of_view:"Screening",
-    // scheduled_with:[{
-    //   friend_name:req.body.friend_name,
-    //   friend_id:req.body.friend_id,
-    //   status:0
-    // }]
-  
+    
   });
   schedule.save((err, schedule) => {
       if (err) {
@@ -941,7 +936,7 @@ exports.showAgree = (req, res) => {
 
 
 exports.showMakerCount= (req, res) => {
-User.count()
+User.count({is_maker: true})
   .then(data => {
     res.json(data)
     })
@@ -955,7 +950,7 @@ User.count()
 
 }
 exports.showWatcherCount= (req, res) => {
-  User.count()
+  User.count({is_maker: false})
     .then(data => {
       res.json(data)
       })

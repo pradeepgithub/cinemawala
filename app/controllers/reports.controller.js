@@ -150,7 +150,7 @@ exports.showReportsMovieWachedByGenders = (req, res) => {
        
          WatchedBy.aggregate([
            {$match: {"users.gender":{$ne: ""}}},
-          { "$project": { "user_id": { "$toObjectId": "$user_id"},title:1 } },
+          { "$project": { "user_id": { "$toObjectId": "$user_id"}, title:1 } },
            { "$lookup": {
              "from": "users",
              "localField":  "user_id",

@@ -18,43 +18,44 @@ module.exports = function(app) {
   //Movies 
   app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
   
-  app.get("/api/movie/all", moviecontroller.findAll);
-  app.get("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
-  app.get("/api/movie/details", moviecontroller.findOneById);
-  app.get("/api/movie/myprojectslist", moviecontroller.myProjectsList);
+  app.post("/api/movie/all", moviecontroller.findAll);
+  app.post("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
+  app.post("/api/movie/details", moviecontroller.findOneById);
+  app.post("/api/movie/myprojectslist", moviecontroller.myProjectsList);
   app.post("/api/movie/myprojectslists", moviecontroller.myProjectsList);
   app.post("/api/movie/moviedetails", moviecontroller.findOneById);
   //Movie Crew
   app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);
-  app.get("/api/movie/listmoviecrew",  moviecontroller.listMovieCrew);
+  app.post("/api/movie/listmoviecrew",  moviecontroller.listMovieCrew);
   app.post("/api/movie/acceptmoviecrew", [authJwt.verifyToken], moviecontroller.acceptRejectCrew);
 
   //Movie Watch
   app.post("/api/movie/addmoviewatch", [authJwt.verifyToken], moviecontroller.addMovieWatch);
-  app.get("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
+  app.post("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
   
 
   //Movie Ratings
   app.post("/api/movie/addmovierating", [authJwt.verifyToken], moviecontroller.addMovieRating);
-  app.get("/api/movie/listmovierating", moviecontroller.listMovieRating);
-  app.get("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
+  app.post("/api/movie/listmovierating", moviecontroller.listMovieRating);
+  app.post("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
+  app.post("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
 
   //Movie Listings
-  app.get("/api/movie/toptrending", moviecontroller.listMoviesSpecial);
-  app.get("/api/movie/alltrending", moviecontroller.listMoviesSpecial);
-  app.get("/api/movie/toprecent", moviecontroller.listMoviesSpecial);
-  app.get("/api/movie/allrecent", moviecontroller.listMoviesSpecial);
-  app.get("/api/movie/toprandom", moviecontroller.listMoviesSpecial);
-  app.get("/api/movie/allrandom", moviecontroller.findAll);
+  app.post("/api/movie/toptrending", moviecontroller.listMoviesSpecial);
+  app.post("/api/movie/alltrending", moviecontroller.listMoviesSpecial);
+  app.post("/api/movie/toprecent", moviecontroller.listMoviesSpecial);
+  app.post("/api/movie/allrecent", moviecontroller.listMoviesSpecial);
+  app.post("/api/movie/toprandom", moviecontroller.listMoviesSpecial);
+  app.post("/api/movie/allrandom", moviecontroller.findAll);
 
   //Schedules 
   app.post("/api/movie/addschedule",  [authJwt.verifyToken], moviecontroller.addScheduleMovie);
   app.post("/api/movie/addscreening", [authJwt.verifyToken], moviecontroller.addScreeningMovie);
 
   
-  app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
-  app.get("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
+  app.post("/api/movie/listschedules", moviecontroller.listMovieSchedules);
+  app.post("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
   app.post("/api/movie/delmovie", [authJwt.verifyToken],   moviecontroller.delMovie);
   
   
@@ -62,7 +63,7 @@ module.exports = function(app) {
   app.post("/api/movie/delschedule", [authJwt.verifyToken],   moviecontroller.delScheduleMovie);
 
   //Schedules with me by others
-  app.get("/api/movie/listscheduleswithme", moviecontroller.listMovieSchedulesWithMe);
+  app.post("/api/movie/listscheduleswithme", moviecontroller.listMovieSchedulesWithMe);
   app.post("/api/movie/listschedulesbyme", moviecontroller.listMovieSchedulesByMe);
   app.post("/api/movie/updatescheduleswithme", [authJwt.verifyToken], moviecontroller.statusUpdateMovieSchedulesWithMe);
 
@@ -88,10 +89,10 @@ module.exports = function(app) {
   app.post("/api/reports/showreportsusercountrywise",  reportscontroller.showReportsUserCountryWise);
   app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
   app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
-  app.get("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
-  app.get("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
-  app.get("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
-  app.get("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
+  app.post("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
+  app.post("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
+  app.post("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
+  app.post("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
   
   app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
 

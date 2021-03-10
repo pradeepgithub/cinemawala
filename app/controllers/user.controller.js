@@ -6,11 +6,14 @@ const Friends = require("../models/friends.model");
 const { schema } = require("../models/friends.model");
 const mongoose = require("mongoose");
 const express = require("express");
+const stripe = require('stripe')('sk_test_51IT3g2DmuthGm00hxbjGlbwadAU0FfazKe0CEThcmZU5Y0yxZXvixzUq5rFSQxiGpYxPTrUsCku4gYdlsTeHWXrG00SGmZREcg');
+
 const User = db.user;
 const Role = db.role;
 const Friend = db.friend;
 const SupportWrite = db.supportwrite;
 const Country = db.country;
+
 
 const multer = require('multer');
 let transport = nodemailer.createTransport({
@@ -18,13 +21,12 @@ let transport = nodemailer.createTransport({
   service: 'gmail', 
   //port: 2525,
   auth: {
-     user: 'pradeep.invite@gmail.com',
-     pass: '@dwitiya123'
+     user: 'digitalvimarsh@gmail.com',
+     pass: 'tposipxjhfwtbhgw'
   }
 });
 
 exports.showProfile = (req, res) => {
- // console.log(req.body.username);
 User.findOne({username: req.body.username}).then(data => {
   res.json(data);
 })
@@ -38,7 +40,7 @@ User.findOne({username: req.body.username}).then(data => {
 };
 
 
-exports.completeProfile = (req, res) => {
+exports.completeWatcherProfile = (req, res) => {
 
     first_name= req.body.first_name;
     last_name=req.body.last_name;
@@ -53,27 +55,14 @@ exports.completeProfile = (req, res) => {
     state= req.body.state;
     pin= req.body.pin;
     country_name = req.body.country_name;
-    film_school_name=req.body.film_school_name;
-    film_course_name=req.body.film_course_name;
-    film_school_year=req.body.film_school_year;
-    film_school_country=req.body.film_school_country;
-    imdb_no=req.body.imdb_no;
-    imdb_url=req.body.imdb_url;
     fav_genre=req.body.fav_genre;
-    is_viewer_msg_blocked=req.body.is_viewer_msg_blocked;
-    is_maker_msg_blocked=req.body.is_maker_msg_blocked;
-    console.log(req.body.is_maker_msg_blocked);
     if(req.files)
-
     {
     profile_image=req.file.filename;
     User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
       year_of_birth:year_of_birth, 
       mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, 
-      film_school_year:film_school_year, film_school_country:film_school_country,
-      imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked }}).then(data => {
-       
+      fav_genre:fav_genre }}).then(data => {
       res.send(data);
       })
       .catch(err => {
@@ -88,9 +77,7 @@ exports.completeProfile = (req, res) => {
       User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
         year_of_birth:year_of_birth, 
         mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-        fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country,
-        imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked  }}).then(data => {
-         
+        fav_genre:fav_genre }}).then(data => {
         res.send(data);
         })
         .catch(err => {
@@ -100,15 +87,72 @@ exports.completeProfile = (req, res) => {
           });
         });
     }
-   
-    
-  
 
-
-  
 };
 
+exports.completeProfile = (req, res) => {
 
+  first_name= req.body.first_name;
+  last_name=req.body.last_name;
+  user_id=req.body.user_id;
+  country= req.body.country;
+  email= req.body.email;
+  year_of_birth=req.body.year_of_birth;
+  mobile_number= req.body.mobile_number;
+  gender= req.body.gender;
+  street= req.body.street;
+  city= req.body.city;
+  state= req.body.state;
+  pin= req.body.pin;
+  country_name = req.body.country_name;
+  film_school_name=req.body.film_school_name;
+  film_course_name=req.body.film_course_name;
+  film_school_year=req.body.film_school_year;
+  film_school_country=req.body.film_school_country;
+  imdb_no=req.body.imdb_no;
+  imdb_url=req.body.imdb_url;
+  fav_genre=req.body.fav_genre;
+  is_viewer_msg_blocked=req.body.is_viewer_msg_blocked;
+  is_maker_msg_blocked=req.body.is_maker_msg_blocked;
+  if(req.files)
+
+  {
+  profile_image=req.file.filename;
+  User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
+    year_of_birth:year_of_birth, 
+    mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
+    fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, 
+    film_school_year:film_school_year, film_school_country:film_school_country,
+    imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked }}).then(data => {
+     
+    res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  }
+  else{
+    profile_image="";
+    User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
+      year_of_birth:year_of_birth, 
+      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
+      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country,
+      imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked  }}).then(data => {
+       
+      res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
+  }
+
+};
 
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
@@ -147,6 +191,10 @@ exports.findMakerAll = (req, res) => {
 if(status == 'pending')
 {
   is_active = false;
+}
+else if(status == 'active')
+{
+  is_active = true;
 }
 else{
   is_active = true;
@@ -193,10 +241,10 @@ exports.changepassword = (req, res) => {
         User.updateOne({ username: userToUpdate}, {$set: {password: passToUpdate} }, function (err, result) {
                       if(err || result === null)
                       {
-                      res.send("Nothing updated");
+                      res.send({error: "Nothing updated"});
                       }else
                       {
-                        res.send("Password Updated");
+                        res.send({message: "Password Updated"});
                       }
       
                       });
@@ -204,6 +252,40 @@ exports.changepassword = (req, res) => {
 });
  
 };
+
+exports.sendPasswordLink = (req, res) => {
+     console.log(req.body.email);
+  User.findOne({email: req.body.email}).exec(function(err, doc)
+  {
+
+      if(err || doc === null)
+      {
+        res.status(404).json({error: doc});
+       
+      } else {
+  
+      const message = {
+            from: 'pradeep.invite@gmail.com', // Sender address
+            to: 'pradeep.invite@gmail.com',  // recipients
+            subject: 'Reset Password Link', // Subject line
+            text: 'Link: http://localhost:3000/update-password'// Plain text body
+        };
+      transport.sendMail(message, function(err, info) {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log('mail has sent.');
+              console.log(info);
+            }
+        });
+          res.send({ message: 'Pasword reset link has been sent.' });
+      }
+  
+     }
+  );
+};
+
+
 
 
 exports.sendFriendInvite = (req, res) => {
@@ -316,6 +398,8 @@ exports.showFriends = (req, res) => {
   
 const user_id = req.body.user_id;
 const mobile_number = req.body.mobile_number;
+
+
 var arr = [];
 Friend.find({
   $or: [{ friend_id: user_id }, { user_id: user_id }], status:1
@@ -626,3 +710,37 @@ exports.getCountryName = (req, res) => {
        });
      });
  };
+
+exports.Pay = async (request, response) => {
+  try {
+     // Create the PaymentIntent
+    let intent = await stripe.paymentIntents.create({
+      payment_method: request.body.payment_method_id,
+      description: "Test payment",
+      amount: request.body.amount * 100,
+      currency: 'inr',
+      confirmation_method: 'manual',
+      confirm: true
+    });
+    // Send the response to the client
+    response.send(generateResponse(intent));
+  } catch (e) {
+    // Display error on client
+    return response.send({ error: e.message });
+  }
+};
+
+const generateResponse = (intent) => {
+  if (intent.status === 'succeeded') {
+    // The payment didn’t need any additional actions and completed!
+    // Handle post-payment fulfillment
+    return {
+      success: true
+    };
+  } else {
+    // Invalid status
+    return {
+      error: 'Invalid PaymentIntent status'
+    };
+  }
+};

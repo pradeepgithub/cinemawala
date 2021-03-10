@@ -18,27 +18,28 @@ module.exports = function(app) {
   app.get("/api/user/otp", otpcontroller.sendOTP);  
   app.get("/api/user/verifyotp", otpcontroller.verifyOTP);
   app.post("/api/user/changepassword", controller.changepassword);
+  app.post("/api/user/sendpasswordlink", controller.sendPasswordLink);
+ 
+  app.post("/api/user/pay", controller.Pay);
   app.post("/api/user/changeStatus", controller.changeStatus);
-  
-  
   app.get("/api/user/listallusers",  controller.listAll);
   app.get("/api/user/listallmakers",  controller.findMakerAll);
   app.post("/api/user/listallwatchers",  controller.findMakerAll);
-  app.get("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
+  app.post("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
   app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
   app.post("/api/user/updateprofilewithimage", upload.single('profile_image'), controller.completeProfile);
+  app.post("/api/user/updatewatcherprofile", [authJwt.verifyToken], controller.completeWatcherProfile);
   app.post("/api/user/profiles", controller.showProfile);
-
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
   //sending multiple invites
   app.post("/api/user/sendinvitearray", controller.sendFriendInviteArray);
   
 
-  app.post("/api/user/acceptrejectinvite", controller.acceptRejectFriendsInvite);
-  app.get("/api/user/showsentinvite",  controller.showFriendInviteSent);
-  app.get("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
+  app.post("/api/user/acceptrejectinvite", [authJwt.verifyToken], controller.acceptRejectFriendsInvite);
+  app.post("/api/user/showsentinvite",  controller.showFriendInviteSent);
+  app.post("/api/user/showrecievedinvite",  controller.showFriendInviteRecieved);
   app.post("/api/user/showmyfriends",  controller.showFriends);
-  app.post("/api/user/unfriend", controller.unFriends);
+  app.post("/api/user/unfriend", [authJwt.verifyToken], controller.unFriends);
 
 
   app.post("/api/user/writetous",  [authJwt.verifyToken],  controller.writeToUs);
