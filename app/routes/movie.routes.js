@@ -18,7 +18,7 @@ module.exports = function(app) {
   //Movies 
   app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
   
-  app.post("/api/movie/all", moviecontroller.findAll);
+  app.get("/api/movie/all", moviecontroller.findAll);
   app.post("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.post("/api/movie/details", moviecontroller.findOneById);
   app.post("/api/movie/myprojectslist", moviecontroller.myProjectsList);
@@ -27,7 +27,7 @@ module.exports = function(app) {
   //Movie Crew
   app.post("/api/movie/updatemoviecrew",[authJwt.verifyToken], moviecontroller.addMovieCrew);
   app.post("/api/movie/addmoviecrew", [authJwt.verifyToken], moviecontroller.addMovieCrew);
-  app.post("/api/movie/listmoviecrew",  moviecontroller.listMovieCrew);
+  app.get("/api/movie/listmoviecrew",  moviecontroller.listMovieCrew);
   app.post("/api/movie/acceptmoviecrew", [authJwt.verifyToken], moviecontroller.acceptRejectCrew);
 
   //Movie Watch
@@ -37,7 +37,7 @@ module.exports = function(app) {
 
   //Movie Ratings
   app.post("/api/movie/addmovierating", [authJwt.verifyToken], moviecontroller.addMovieRating);
-  app.post("/api/movie/listmovierating", moviecontroller.listMovieRating);
+  app.get("/api/movie/listmovierating", moviecontroller.listMovieRating);
   app.post("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
   app.post("/api/movie/listmovieratingbyuser", moviecontroller.listMovieRatingByUser);
 
@@ -54,7 +54,7 @@ module.exports = function(app) {
   app.post("/api/movie/addscreening", [authJwt.verifyToken], moviecontroller.addScreeningMovie);
 
   
-  app.post("/api/movie/listschedules", moviecontroller.listMovieSchedules);
+  app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
   app.post("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
   app.post("/api/movie/delmovie", [authJwt.verifyToken],   moviecontroller.delMovie);
   
@@ -90,9 +90,9 @@ module.exports = function(app) {
   app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
   app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
   app.post("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
-  app.post("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
-  app.post("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
-  app.post("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
+  app.get("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
+  app.get("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
+  app.get("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
   
   app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
 
