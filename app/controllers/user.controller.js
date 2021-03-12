@@ -40,6 +40,39 @@ User.findOne({username: req.body.username}).then(data => {
 };
 
 
+exports.isUserExists = (req, res) => {
+
+  // User.findOne({username: req.body.username}).then(data => {
+  //   //res.json(data);
+
+  //   res.send({userexist: true});
+   
+  // })
+  // .catch(err => {
+  //   res.send({userexist: false});
+  // });
+
+  User.findOne({username: req.body.username}, function(err, user){
+    if(err) {
+      console.log(err);
+    }
+    var message;
+
+    if(user) {
+      
+        message = true;
+        
+    } else {
+        message= false;
+       
+    }
+    res.json(message);
+});
+
+  
+  };
+
+
 exports.completeWatcherProfile = (req, res) => {
 
     first_name= req.body.first_name;

@@ -55,5 +55,6 @@ module.exports = function(app) {
   app.get('/api/user/listcountries', controller.listCountries);
   app.post('/api/user/getcountrycialcode', controller.getCountryDialCode);
   app.post('/api/user/getcountryname', controller.getCountryName);
+  app.post('/api/user/isuserexists', controller.isUserExists);
   
 };
