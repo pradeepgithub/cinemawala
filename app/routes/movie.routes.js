@@ -17,7 +17,7 @@ module.exports = function(app) {
 //[authJwt.verifyToken],
   //Movies 
   app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
-  
+  app.post("/api/movie/updatemovie",  [authJwt.verifyToken], moviecontroller.updateMovie);
   app.get("/api/movie/all", moviecontroller.findAll);
   app.post("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.post("/api/movie/details", moviecontroller.findOneById);

@@ -44,14 +44,12 @@ module.exports = function(app) {
 
   app.post("/api/user/writetous",  [authJwt.verifyToken],  controller.writeToUs);
   app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
-
   app.post("/api/user/reportproblem",  [authJwt.verifyToken], controller.reportAProblem);
   app.get("/api/user/showallreportproblems",  controller.showAllReportProblemsMessages);
   
  // app.post("/api/user/uploadprofileimage",  controller.uploadProfileImage);
 
   app.post('/api/user/uploadprofileimage', upload.single('demo_image'), controller.uploadProfileImage);
-
   app.get('/api/user/listcountries', controller.listCountries);
   app.post('/api/user/getcountrycialcode', controller.getCountryDialCode);
   app.post('/api/user/getcountryname', controller.getCountryName);

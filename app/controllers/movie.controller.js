@@ -88,12 +88,10 @@ exports.findAllByFilter = (req, res) => {
 exports.findOneById = (req, res) => {
 
   const id = req.body.id;// ? req.body.title : "";
-  Movie.find(
-    {
-      _id: id
-    }
-  ).then(data => {
-      res.send(data);
+  Movie.findOne({_id: id})
+  .then(data => {
+     // res.send(data);
+     res.json(data);
     })
     .catch(err => {
       console.log("Rrrr");
@@ -102,6 +100,8 @@ exports.findOneById = (req, res) => {
           err.message || "Some error occurred while retrieving Users."
       });
     });
+
+
 };
 
 exports.saveMovie = (req, res) => {
@@ -155,6 +155,42 @@ exports.saveMovie = (req, res) => {
   
 };
 
+exports.updateMovie = (req, res) => {
+
+  
+Movie.update({_id: req.body.movieId}, {$set: 
+  {  
+  title: req.body.title,
+  storyline: req.body.storyline,
+  rating:req.body.rating,
+  length: req.body.length,
+  country:req.body.country,
+  actors: req.body.actors,
+  screened_festival:req.body.screened_festival,
+  awards: req.body.awards,
+  cost: req.body.cost,
+  language:req.body.language,
+  type:req.body.type,
+  poster: req.body.poster,
+  directors: req.body.directors,
+  genres: req.body.genres,
+  released: parseInt(req.body.released),
+  movie_url:req.body.movie_url,   
+}
+})
+.then(data => {
+  res.send(data);
+})
+.catch(err => {
+  console.log("Rrrr");
+  res.status(500).send({
+    message:
+      err.message || "Some error occurred while retrieving Users."
+  });
+});
+
+
+};
 //add movies crew
 exports.addMovieCrew = (req, res) => {
 

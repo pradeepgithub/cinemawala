@@ -54,9 +54,10 @@ exports.signup = (req, res) => {
 
 
 exports.signin = (req, res) => {
-  User.findOne({
-    username: req.body.username
-  }).then(user => {
+  User.findOne({ $or: [
+    {username: req.body.username},
+    {mobile_number: req.body.username}
+]  }).then(user => {
     
     // console.log("In this");
     //console.log(user);
@@ -138,4 +139,3 @@ exports.resetpassword = (req, res) => {
       });
     });
 };
-
