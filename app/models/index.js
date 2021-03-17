@@ -5,6 +5,7 @@ const db = {};
 
 db.mongoose = mongoose;
 db.user = require("./user.model");
+db.usertoken= require("./usertoken.model");
 db.role = require("./role.model");
 db.otp = require("./otp.model");
 db.movie = require("./movie.model");
@@ -16,5 +17,6 @@ db.supportwrite = require("./supportwrite.model");
 db.watched_by=  require("./watched_by.model");
 db.country=  require("./countries.model");
 db.ROLES = ["user", "admin", "moderator", "maker"];
+
 
 module.exports = db;

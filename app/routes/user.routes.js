@@ -29,7 +29,7 @@ module.exports = function(app) {
   app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
   app.post("/api/user/updateprofilewithimage", upload.single('profile_image'), controller.completeProfile);
   app.post("/api/user/updatewatcherprofile", [authJwt.verifyToken], controller.completeWatcherProfile);
-  app.post("/api/user/profiles", controller.showProfile);
+  // app.post("/api/user/profiles", controller.showProfile);
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
   //sending multiple invites
   app.post("/api/user/sendinvitearray", controller.sendFriendInviteArray);

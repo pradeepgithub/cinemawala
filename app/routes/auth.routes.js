@@ -11,4 +11,5 @@ module.exports = function(app) {
 //,verifySignUp.checkRolesExisted]
   app.post("/api/auth/signup",[verifySignUp.checkDuplicateUsernameOrEmail],controller.signup);
   app.post("/api/auth/signin", controller.signin);
+  app.post("/api/auth/refresh", controller.refresh);
 };

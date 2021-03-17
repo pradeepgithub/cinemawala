@@ -2,6 +2,7 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
+const UserToken = db.usertoken;
 
 
 var jwt = require("jsonwebtoken");
@@ -58,9 +59,6 @@ exports.signin = (req, res) => {
     {username: req.body.username},
     {mobile_number: req.body.username}
 ]  }).then(user => {
-    
-    // console.log("In this");
-    //console.log(user);
 
     var passwordIsValid = bcrypt.compareSync(
       req.body.password,
@@ -75,11 +73,20 @@ exports.signin = (req, res) => {
       });
     }
 
+  
     var token = jwt.sign({ id: user.id }, config.secret, {
       expiresIn: 86400 // 24 hours
     });
     
-    
+    UserToken.create({
+      user_id: user._id,
+      username: user.username,
+      accessToken: token
+    }, function (err, small) {
+      if (err) return handleError(err);
+      // saved!
+    });
+
     res.status(200).send({
       id: user._id,
       username: user.username,
@@ -90,7 +97,62 @@ exports.signin = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Users."
+    });
+  });
+  
+  
+  
+ 
+      
+    
+};
 
+
+exports.refresh = (req, res) => {
+
+  UserToken.findOne({accessToken: req.body.token}).then(usertoken => {
+   
+
+    if(usertoken)
+    {
+    var token = jwt.sign({ id: usertoken.user_id }, config.secret, {
+      expiresIn: 518400 // 6days
+    });
+    
+    if(token)
+    {
+    UserToken.updateOne({user_id: usertoken.user_id}, {$set: {accessToken: token}}).then(data => {
+      res.status(200).send({
+        id: usertoken.user_id,
+        username: usertoken.username,
+        accessToken: token
+      });
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Some error occurred while refreshing token."
+        });
+      }); 
+      
+      
+    }else{
+      res.status(500).send({
+        message: "Given Token is not valid."
+      });
+    }
+  }
+  else
+  {
+    res.status(500).send({
+      message: "Given Token is not valid."
+    });
+    
+  }
+  })
+  .catch(err => {
+    res.status(500).send({
       message:
         err.message || "Some error occurred while retrieving Users."
     });
