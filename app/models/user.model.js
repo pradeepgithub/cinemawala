@@ -20,6 +20,7 @@ const User = mongoose.model(
     state:String,
     fav_genre:String,
     is_maker:Boolean,
+    is_admin:Boolean,
     profile_image:String,
     film_school_name:String,
     film_course_name:String,
@@ -30,6 +31,7 @@ const User = mongoose.model(
     is_active:Boolean,
     is_viewer_msg_blocked:Boolean,
     is_maker_msg_blocked:Boolean,
+
   }, opts)
 );
 
