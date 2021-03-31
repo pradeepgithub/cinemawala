@@ -9,6 +9,7 @@ db.usertoken= require("./usertoken.model");
 db.role = require("./role.model");
 db.otp = require("./otp.model");
 db.movie = require("./movie.model");
+db.payments= require("./payments.model");
 db.friend = require("./friends.model");
 db.scheduledmovie = require("./schedule.model");
 db.myfev_movie = require("./myfev_movies.model");

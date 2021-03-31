@@ -19,9 +19,10 @@ const SupportWrite = db.supportwrite;
 exports.showReportsUserCountryWise= (req, res) => {
     //User report country wise
     var cc=[];
+
     for(var i=1;i<400;i++)
     {
-        cc.push(i);
+      cc.push(i);
     }
         User.aggregate([
           { "$group": {
@@ -33,7 +34,6 @@ exports.showReportsUserCountryWise= (req, res) => {
           }},
         
           {$project: {"_id":0, "country":"$_id.country", "country_name":"$_id.country_name","gender":"$_id.gender", "count":"$userCount"  }},
-          // { "$sort": { "count": -1 } },
           {
             $bucket:
             {
@@ -42,11 +42,16 @@ exports.showReportsUserCountryWise= (req, res) => {
                 default:"other", 
                 output : 
                     {
-                        "total" : {$sum : 1}, 
-                        "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: 1, else: 0 }}},
-                        "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: 1, else: 0 }}}  }
-                    }
+                      "Total" : {$sum : '$count'}, 
+                      "Male" : {$sum : {$cond: [{$eq: ['$gender','Male']}, '$count', 0]}},
+                      "Female" : {$sum : {$cond: [{$eq: ['$gender','Female']}, '$count', 0]}},
+                      "ThirdGender" : {$sum : {$cond: [{$eq: ['$gender','third_gender']}, '$count', 0]}}
+                      
+                    }   
+                        
             }
+          
+          }
   
          
          
@@ -65,7 +70,7 @@ exports.showReportsUserCountryWise= (req, res) => {
       }
   
 
-      exports.showReportsUserCountryCount= (req, res) => {
+exports.showReportsUserCountryCount= (req, res) => {
             User.aggregate([
               { "$group": {
                   "_id": {
@@ -116,13 +121,16 @@ exports.showReportsUserAgeWise= (req, res) => {
             $bucket:
             {
                 groupBy : "$age", 
-                boundaries:[0,20,30,40,50], 
+                boundaries:[0, 20, 30, 40, 50, 60, 70], 
                 default:"other", 
                 output : 
                     {
-                        "total" : {$sum : 1}, 
-                        "male" : {$sum : {$cond: { if: { $eq: [ "$gender", "male" ] }, then: 1, else: 0 }}},
-                        "female" : {$sum : {$cond: { if: { $eq: [ "$gender", "female" ] }, then: 1, else: 0 }}}  }
+                        "Total" : {$sum : '$count'}, 
+                        "Male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: '$count', else: 0 }}},
+                        "Female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: '$count', else: 0 }}}, 
+                        "ThirdGender" : {$sum : {$cond: { if: { $eq: [ "$gender", "third_gender" ] }, then: '$count', else: 0 }}} 
+                    
+                    }
                     }
             }
   
@@ -143,89 +151,31 @@ exports.showReportsUserAgeWise= (req, res) => {
           });
       }
   
-  
-exports.showReportsMovieWachedByGenders = (req, res) => {
-
-        //var user_id =  req.body.user_id
-       
-         WatchedBy.aggregate([
-           {$match: {"users.gender":{$ne: ""}}},
-          { "$project": { "user_id": { "$toObjectId": "$user_id"}, title:1 } },
-           { "$lookup": {
-             "from": "users",
-             "localField":  "user_id",
-             "foreignField": "_id",
-             "as": "Watched_by"
-           }},
-           { "$project": { 
-             title:1,
-             "Watched_by.first_name":1,
-             "Watched_by.gender":1
-            } },
-       
-            {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
-          
-           
-        {$project: {"_id":0, 
-        "title":"$_id.title",
-        gender:
-        {
-            $reduce: {
-               input:"$_id.gender",
-               initialValue: "",
-               in: { $concat : ["$$value", "$$this"] }
-             }
-         }
-        , count:"$totalPerson"  }},
-
-         ])
-         .then(data => {
-
-
-  
-           
- res.send(data);
-           })
-           .catch(err => {
-            // console.log("Rrrr");
-             res.status(500).send({
-               message:
-                 err.message || "Some error occurred while retrieving Users."
-             });
-           });
-       
-       
-       }
-
        
 exports.showReportsMovieWachedByGenre = (req, res) => {
 
     //var user_id =  req.body.user_id
    
      WatchedBy.aggregate([
-       {$match: {"users.gender":{$ne: ""}}},
-      { "$project": { "user_id": { "$toObjectId": "$user_id"},genre:1 } },
+      //  { "$project": { "movie_id": { "$toObjectId": "$movie_id"},genres:1 } },
        { "$lookup": {
-         "from": "users",
-         "localField":  "user_id",
-         "foreignField": "_id",
-         "as": "Watched_by"
+         "from": "movies",
+         "localField":  "title",
+         "foreignField": "title", 
+         "as": "movies"
        }},
        { "$project": { 
          title:1,
-         "Watched_by.first_name":1,
-         "Watched_by.gender":1
+         "movies.genres":1,
         } },
    
-        {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
+      {$group : {_id : {title:"$title", genres: "$movies.genres"} , totalPerson: { $sum: 1 }}},
       
-       
-    {$project: {"_id":0, 
-    "title":"$_id.title",
-    gender:
+ {$project: {"_id":0, 
+    genres:
     {
         $reduce: {
-           input:"$_id.gender",
+           input:"$_id.genres",
            initialValue: "",
            in: { $concat : ["$$value", "$$this"] }
          }
@@ -250,3 +200,127 @@ res.send(data);
    
    
    }
+
+exports.showReportsMovieWachedByGenders = (req, res) => {
+
+  //var user_id =  req.body.user_id
+ 
+   WatchedBy.aggregate([
+    { "$project": { "user_id": { "$toObjectId": "$user_id"}, genre:1 } },
+     { "$lookup": {
+       "from": "users",
+       "localField":  "user_id",
+       "foreignField": "_id",
+       "as": "Watched_by"
+     }},
+     { "$project": { 
+       title:1,
+       "Watched_by.country":1,
+       "Watched_by.first_name":1,
+       "Watched_by.gender":1
+      } },
+ 
+ 
+
+  {$group : {_id : {country:"$Watched_by.country", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
+  
+  {
+    $project: {"_id":0, 
+  "country":
+  {
+    $reduce: {
+       input:"$_id.country",
+       initialValue: "",
+       in: { $concat : ["$$value", "$$this"] }
+     }
+ },
+ 
+  gender:
+  {
+      $reduce: {
+         input:"$_id.gender",
+         initialValue: "",
+         in: { $concat : ["$$value", "$$this"] }
+       }
+   }
+  , count:"$totalPerson"  }},
+
+   { "$sort": { "count": -1 } },
+
+      {
+          $bucket:
+          {
+              groupBy : "$country", 
+              boundaries:["41","42","44","91","92"], 
+              default:"other", 
+              output : 
+                  {
+                      "Total" : {$sum : '$count'}, 
+                      "Male" : {$sum : {$cond: { if: { $eq: [ "$gender", "Male" ] }, then: '$count', else: 0 }}},
+                      "Female" : {$sum : {$cond: { if: { $eq: [ "$gender", "Female" ] }, then: '$count', else: 0 }}},  
+                      "ThirdGender" : {$sum : {$cond: [{$eq: ['$gender','third_gender']}, '$count', 0]}}
+                    },
+                     
+                      
+                      
+                  }
+          }
+
+   ])
+   .then(data => {
+
+
+
+     
+res.send(data);
+     })
+     .catch(err => {
+      // console.log("Rrrr");
+       res.status(500).send({
+         message:
+           err.message || "Some error occurred while retrieving Users."
+       });
+     });
+ 
+ 
+ }
+
+
+        
+exports.showReportsMovieMostViewed = (req, res) => {
+
+   WatchedBy.aggregate([
+     { "$lookup": {
+       "from": "movies",
+       "localField":  "title",
+       "foreignField": "title", 
+       "as": "movies"
+     }},
+     { "$project": { 
+       title:1,
+      } },
+ 
+    {$group : {_id : {title:"$title"} , totalPerson: { $sum: 1 }}},
+    
+  {$project: {"_id":0, 
+  title:"$_id.title",
+  count:"$totalPerson" }},
+
+  {
+    "$limit": 10
+}
+
+   ])
+   .then(data => {
+res.send(data);
+     })
+     .catch(err => {
+      // console.log("Rrrr");
+       res.status(500).send({
+         message:
+           err.message || "Some error occurred while retrieving Users."
+       });
+     });
+ 
+ 
+ }

@@ -3,6 +3,7 @@ const { user, role } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Movie = db.movie;
+const Payments = db.payments;
 const ScheduledMovie = db.scheduledmovie;
 const MyFev_Movie = db.myfev_movie;
 const VoteForScheduledMovie = db.vote_schedule;
@@ -50,29 +51,33 @@ exports.myProjectsList = (req, res) => {
 };
 exports.findAllByFilter = (req, res) => {
 
-  const title = req.body.title;// ? req.body.title : "";
-  const length = req.body.duration;// ? req.body.duration : "";
-  const type = req.body.categories;//? req.body.categories : "";
-  const language = req.body.language;//? req.body.language : "";
-  const country = req.body.country;//? req.body.country : "";
-  const genres = req.body.genres;//? req.body.genres : "";
-  const year_from = req.body.year_from; //? req.query.year_from : "";
-  const year_to = req.body.year_to;//? req.body.year_to : "";
-  const actors = req.body.actors;//? req.body.actors : "";
-  const screened_festival = req.body.festival;//? req.body.festival: "";
+  const title = req.body.title;
+  const length = req.body.length;
+  const type = req.body.type;
+  const language = req.body.language;
+  const country = req.body.country;
+  const genres = req.body.genres;
+  const year_from = req.body.year_from;
+  const year_to = req.body.year_to;
+  const actors = req.body.actors;
+  const screened_festival = req.body.screened_festival;
 
   Movie.find(
-    { $and: [  {
-      title: { $regex: new RegExp(title), $options: "i" }},
+    { $and: [  
+    title ? { title: { $regex: new RegExp(title), $options: "i" }}:{},
+    length ? { length: { $regex: new RegExp(length), $options: "i" } } : {},
     type ? { type: { $regex: new RegExp(type), $options: "i" } } : {},
     language ? { language: { $regex: new RegExp(language), $options: "i" } } : {},
-  country ? { country: { $regex: new RegExp(country), $options: "i" } } : {},
-  genres ? { genres: { $regex: new RegExp(genres), $options: "i" } } : {},
-  length ? { length: { $regex: new RegExp(length), $options: "i" } } : {},
-  screened_festival ? { screened_festival: { $regex: new RegExp(screened_festival), $options: "i" } } : {},
-  year_to ? { released: year_to} : {},
-  {actors: {$regex: new RegExp(actors), $options: "^$"}}] 
-   } )
+    country ? { country: { $regex: new RegExp(country), $options: "i" } } : {},
+    genres ? { genres: {  $regex: new RegExp('.*' + genres + '.*') , $options: "i" } } : {},
+    year_from ? { released: {$gte:year_from } } : {},
+    year_to ? { released: {$lte:year_to }} : {},
+    actors ? {actors: {$regex: new RegExp(actors), $options: "^$"}} : {},
+    screened_festival ? { screened_festival: { $regex: new RegExp(screened_festival), $options: "i" } } : {},
+    ] 
+   } 
+    
+   )
     .then(data => {
       res.send(data);
     })
@@ -986,7 +991,7 @@ User.count({is_maker: true})
 
 }
 exports.showWatcherCount= (req, res) => {
-  User.count({is_maker: false})
+  User.count({is_maker: false, is_admin: false})
     .then(data => {
       res.json(data)
       })
@@ -1031,7 +1036,7 @@ exports.showReports= (req, res) => {
 
     {$group : {_id : {title:"$title", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
    
-    {$project: {"_id":0, "title":"$_id.title",gender:{ $toString: "$_id.gender" } , count:"$totalPerson"  }},
+    {$project: {"_id":0, title:"$_id.title", gender: "$_id.gender"  , count:"$totalPerson"  }},
 
   ])
   .then(data => {
@@ -1047,3 +1052,113 @@ exports.showReports= (req, res) => {
     
 }
 
+exports.showReportsDocument= (req, res) => {
+  WatchedBy.aggregate([
+    {$match: {"users.gender":{$ne: ""}}},
+   { "$project": { "user_id": { "$toObjectId": "$user_id"},title:1 } },
+    { "$lookup": {
+      "from": "users",
+      "localField":  "user_id",
+      "foreignField": "_id",
+      "as": "Watched_by"
+    }},
+    { "$project": { 
+      type:1,
+      "Watched_by.first_name":1,
+      "Watched_by.gender":1
+     } },
+
+    {$group : {_id : {type:"$type", gender: "$Watched_by.gender"} , totalPerson: { $sum: 1 }}},
+   
+    {$project: {"_id":0, type:"$_id.type", "gender":"$_id.gender", count:"$totalPerson"  }},
+
+  ])
+  .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+    
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+    
+}
+
+
+exports.addPayments = (req, res) => {
+
+  const payments = new Payments({
+    transaction_id: req.body.transaction_id,
+    payment_by:req.body.payment_by,
+    movie_id: req.body.movie_id,
+    movie_title: req.body.movie_title,
+    amount: req.body.amount,  
+    type: req.body.type,  
+     
+
+  });
+  payments.save((err, payments) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send({ message: payments });
+      });
+  
+};
+
+
+exports.listPayments = (req, res) => {
+  Payments.find()
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+    
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+  
+};
+
+exports.PaymentSum= (req, res) => {
+
+  Payments.aggregate([{$match: { payment_by: req.body.payment_by}, },
+{ $group: { _id : null, sum : { $sum: "$amount" } } }]
+
+ ).then(data => {
+      res.send(data)
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
+      });
+    
+  }
+
+  
+
+exports.changeStatus = (req, res) => {
+
+  const mid= req.body.id;
+  const is_active_status= req.body.is_active;
+
+  Movie.updateOne({_id: mid}, {$set: { is_active:is_active_status }}).then(data => {
+    res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while updating movie status."
+      });
+    });
+   
+  };
+
+  

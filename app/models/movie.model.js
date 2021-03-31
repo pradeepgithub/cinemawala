@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const opts = { toJSON: { virtuals: true } };
 const Movie = mongoose.model(
   "Movies",
   new mongoose.Schema
@@ -35,9 +35,9 @@ const Movie = mongoose.model(
                 user_id: String,
                 rating: Number,
                 },
-                 
+                is_active: Boolean,
                
-        })
+        }, opts)
 );
 
 module.exports = Movie;

@@ -17,7 +17,13 @@ module.exports = function(app) {
 //[authJwt.verifyToken],
   //Movies 
   app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
+  app.post("/api/movie/addnewmovie",  [authJwt.verifyToken], moviecontroller.saveMovie);
+  app.post("/api/movie/addpayments",  moviecontroller.addPayments);
+  app.post("/api/movie/listpayments", moviecontroller.listPayments);
+  app.post("/api/movie/paymentsum", moviecontroller.PaymentSum);
+    
   app.post("/api/movie/updatemovie",  [authJwt.verifyToken], moviecontroller.updateMovie);
+  app.post("/api/movie/changestatus",  moviecontroller.changeStatus);
   app.get("/api/movie/all", moviecontroller.findAll);
   app.post("/api/movie/allbyfilter", moviecontroller.findAllByFilter);
   app.post("/api/movie/details", moviecontroller.findOneById);
@@ -34,7 +40,6 @@ module.exports = function(app) {
   app.post("/api/movie/addmoviewatch", [authJwt.verifyToken], moviecontroller.addMovieWatch);
   app.post("/api/movie/listmoviewatchbyuser", moviecontroller.listMovieWatchByUser);
   
-
   //Movie Ratings
   app.post("/api/movie/addmovierating", [authJwt.verifyToken], moviecontroller.addMovieRating);
   app.get("/api/movie/listmovierating", moviecontroller.listMovieRating);
@@ -52,13 +57,9 @@ module.exports = function(app) {
   //Schedules 
   app.post("/api/movie/addschedule",  [authJwt.verifyToken], moviecontroller.addScheduleMovie);
   app.post("/api/movie/addscreening", [authJwt.verifyToken], moviecontroller.addScreeningMovie);
-
-  
   app.get("/api/movie/listschedules", moviecontroller.listMovieSchedules);
   app.post("/api/movie/listmoviescreening", moviecontroller.listMovieScreening);
   app.post("/api/movie/delmovie", [authJwt.verifyToken],   moviecontroller.delMovie);
-  
-  
   app.post("/api/movie/reschedule", [authJwt.verifyToken],   moviecontroller.reScheduleMovie);
   app.post("/api/movie/delschedule", [authJwt.verifyToken],   moviecontroller.delScheduleMovie);
 
@@ -82,18 +83,25 @@ module.exports = function(app) {
   app.post("/api/movie/sendvoteforschedule", [authJwt.verifyToken], moviecontroller.sendVoteForScheduleMovie);
   app.post("/api/movie/addvoteforschedule",[authJwt.verifyToken], moviecontroller.addVoteForScheduleMovie);
   app.post("/api/movie/listvoteformovieschedule", moviecontroller.listVoteForScheduleMovies);
-
   app.post("/api/movie/myagree",  moviecontroller.showAgree);
-  app.post("/api/movie/myreports",  moviecontroller.showReports);
 
+  app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
+
+
+  //Reporting Controller Route
   app.post("/api/reports/showreportsusercountrywise",  reportscontroller.showReportsUserCountryWise);
   app.post("/api/reports/showreportsuserageywise",  reportscontroller.showReportsUserAgeWise);
   app.post("/api/reports/showreportsmoviewatchedbygenders",  reportscontroller.showReportsMovieWachedByGenders);
-  app.post("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
+  app.get("/api/reports/showreportsusercountrycount",  reportscontroller.showReportsUserCountryCount);
+  app.post("/api/reports/showreportsmoviewachedbygenre",  reportscontroller.showReportsMovieWachedByGenre);
+  app.post("/api/reports/showreportsmoviemostviewed",  reportscontroller.showReportsMovieMostViewed);
+  
+
+  app.post("/api/movie/myreportsdocument",  moviecontroller.showReportsDocument);
+  app.post("/api/movie/myreports",  moviecontroller.showReports);
+
   app.get("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
   app.get("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
   app.get("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
-  
-  app.post("/api/movie/moviepreroll", moviecontroller.moviePreRoll);
 
 }
