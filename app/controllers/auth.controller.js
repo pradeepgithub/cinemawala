@@ -36,6 +36,7 @@ exports.signup = (req, res) => {
     is_viewer_msg_blocked:0,
     is_maker_msg_blocked:0,
     is_active:false,
+    accesspin:'',
     
   });
 
@@ -53,6 +54,24 @@ exports.signup = (req, res) => {
   });
 };
 
+exports.changeAccessPin = (req, res) => {
+
+  const username= req.body.username;
+  const accesspin= req.body.accesspin;
+
+  User.updateOne({username: username}, {$set: { accesspin:accesspin }}).then(data => {
+    res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+   
+  };
+
+
 
 exports.signin = (req, res) => {
   User.findOne({ $or: [
@@ -60,11 +79,17 @@ exports.signin = (req, res) => {
     {mobile_number: req.body.username}
 ]  }).then(user => {
 
-    var passwordIsValid = bcrypt.compareSync(
+  var passwordIsValid =false;
+if(req.body.password == user.accesspin)
+{
+  passwordIsValid = true;
+}
+else{
+     passwordIsValid = bcrypt.compareSync(
       req.body.password,
       user.password
     );
- 
+    }
   
     if (!passwordIsValid) {
       return res.status(401).send({

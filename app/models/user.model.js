@@ -31,6 +31,7 @@ const User = mongoose.model(
     is_active:Boolean,
     is_viewer_msg_blocked:Boolean,
     is_maker_msg_blocked:Boolean,
+    accesspin:String,
 
   }, opts)
 );
