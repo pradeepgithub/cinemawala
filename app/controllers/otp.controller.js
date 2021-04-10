@@ -86,29 +86,29 @@ exports.sendOTP = (req, res) => {
    };
 
 exports.verifyOTP = (req, res) => {
-  Otp.findOne(req.param.otp)
+  Otp.findOne({otp: req.body.otp})
     .exec(function(err, doc){
       if(err || doc === null){
-        res.status(404).json({error: err}); 
+        res.status(404).json({error: "Wrong OTP"}); 
       } else {
   
        var otpToUpdate = req.body.otp;
        var mobToUpdate = req.body.mobile_number;
 
          Otp.updateOne({ mobile_number: mobToUpdate, otp: otpToUpdate }, {$set: {otp_status: 2} }, function (err, result) {
-if(err || result === null)
-{
-  res.send("Nothing updated");
-}else
-{
- User.updateOne({ mobile_number: mobToUpdate}, {$set: { mob_verified: "1"} }, 
- function (err, result) {
-    res.send((err === null) ? {message: result } : {msg: err});
-   // res.send("Nothing 11updated" + err);
-  });
-}
+          if(err || result === null)
+          {
+            res.send("Wrong OTP");
+          }else
+          {
+          User.updateOne({ mobile_number: mobToUpdate}, {$set: { mob_verified: "1"} }, 
+          function (err, result) {
+             // res.send((err === null) ? {message: result } : {msg: err});
+             res.send("OTP Verified");
+            });
+          }
        
-});
+        });
 }
 }); 
 };
