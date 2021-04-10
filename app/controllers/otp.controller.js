@@ -98,13 +98,13 @@ exports.verifyOTP = (req, res) => {
          Otp.updateOne({ mobile_number: mobToUpdate, otp: otpToUpdate }, {$set: {otp_status: 2} }, function (err, result) {
           if(err || result === null)
           {
-            res.send("Wrong OTP");
+            res.status(404).json({error: "Wrong OTP"}); 
           }else
           {
           User.updateOne({ mobile_number: mobToUpdate}, {$set: { mob_verified: "1"} }, 
           function (err, result) {
-             // res.send((err === null) ? {message: result } : {msg: err});
-             res.send("OTP Verified");
+             res.send((err === null) ? {message: "OTP Verified" } : {error: "Wrong OTP"});
+            
             });
           }
        
