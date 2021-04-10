@@ -86,12 +86,14 @@ exports.sendOTP = (req, res) => {
    };
 
 exports.verifyOTP = (req, res) => {
-  Otp.findOne({otp: req.body.otp})
+  Otp.findOne({$and:[{otp: req.body.otp}, {otp_status:1}] })
+
     .exec(function(err, doc){
       if(err || doc === null){
         res.status(404).json({error: "Wrong OTP"}); 
       } else {
   
+        console.log(doc);
        var otpToUpdate = req.body.otp;
        var mobToUpdate = req.body.mobile_number;
 
