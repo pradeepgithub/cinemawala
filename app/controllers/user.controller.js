@@ -559,6 +559,56 @@ exports.showAllWriteToUsMessages = (req, res) => {
     });
 };
 
+exports.showAllWriteToUsMessagesById = (req, res) => {
+
+  let msgid = req.body.message_id;
+  var mongoObjectId = mongoose.Types.ObjectId(msgid);
+  SupportWrite.aggregate([
+  
+   {$match: {"_id": mongoObjectId}},
+   { "$project": {
+    "user_id": { "$toObjectId": "$user_id"},message:1, subject:1, type:1 
+    } 
+    },
+    { "$lookup": {
+      "from": "users",
+      "localField":  "user_id",
+      "foreignField": "_id",
+      "as": "users"
+    }},
+    {
+      "$project":{
+        subject:1,
+        message:1,
+        type:1,
+        "users.first_name":1,
+        "users.last_name":1,
+        "users.mobile_number":1,
+        "users.email":1,
+        "users.country_name":1,
+        "users.city":1,
+        "users.state":1,
+        "users.is_maker":1,
+        "users._id":1,
+         
+      
+  }
+    }
+    
+
+  ])
+    .then(data => {
+      res.send(data);
+      console.log(data);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Users."
+      });
+    });
+};
 //Report a Problem
 
 exports.reportAProblem = (req, res) => {

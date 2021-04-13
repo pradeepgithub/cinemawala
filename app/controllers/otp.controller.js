@@ -12,27 +12,32 @@ const client = require('twilio')(accountSid, authToken)
 let transport = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   service: 'gmail', 
-  port: 2525,
+  port: 465,
   auth: {
-    user: 'pradeep.invite@gmail.com.com',
-    pass: '@dwitiya123'
+    user: 'support@manythoughts.com',
+    pass: '100%Correct'
+    // user: 'digitalvimarsh@gmail.com',
+    // pass: 'Haihay@Vansh'
   }
 });
 
 exports.sendOTP = (req, res) => {
-  var valotp = Math.floor(1000 + Math.random() * 9000);
+ // var valotp = Math.floor(1000 + Math.random() * 9000);
+ var valotp = 1234;
+  var emailtoadd = req.body.email;
+
   const otps = new Otp({
-   mobile_number: req.body.mobile_number,
+   email: 'pradeep.invite@gmail.com',
    otp:valotp,
    otp_status:1
-   
-  });
 
-  Otp.findOne(req.param.mobile_number)
-    // .select(mobile_number)
+  });
+  
+  Otp.findOne({email: emailtoadd})
     .exec(function(err, doc){
       if(err || doc === null)
       {
+        
         res.status(404).json({error: doc});
         otps.save((err, otps) => {
           if (err) {
@@ -44,20 +49,18 @@ exports.sendOTP = (req, res) => {
 
       } else {
   
-       var userToUpdate = req.body.mobile_number;
-         Otp.updateOne({ mobile_number: userToUpdate }, {$set: {otp: valotp} }, function (err, result) {
+       var userToUpdate = req.body.email;
+         Otp.updateOne({ email: userToUpdate }, {$set: {otp: valotp} }, function (err, result) {
           const message = {
-            from: 'pradeep.verma@webhungers.com', // Sender address
-            to: 'pradeep.invite@gmail.com',         // recipients
+            from: 'support@manythoughts.com', // Sender address
+            to: userToUpdate,         // recipients
             subject: 'OTP', // Subject line
             text: 'OTP:'+valotp // Plain text body
         };
-
-
-          client.messages.create({
+      client.messages.create({
             body: 'Your OTP for account verification is this: '+valotp,
             from: '+12517665750',
-            to: '+91'+userToUpdate
+            to: '+91'+'9926619949'
           })
           .then(message => console.log(message.sid))
           .catch(err => {
@@ -93,21 +96,22 @@ exports.verifyOTP = (req, res) => {
         res.status(404).json({error: "Wrong OTP"}); 
       } else {
   
-        console.log(doc);
+      
        var otpToUpdate = req.body.otp;
-       var mobToUpdate = req.body.mobile_number;
+       //var mobToUpdate = req.body.mobile_number;
+       var mobToUpdate ="na";
+       var emailToUpdate = req.body.email;
 
-         Otp.updateOne({ mobile_number: mobToUpdate, otp: otpToUpdate }, {$set: {otp_status: 2} }, function (err, result) {
+         Otp.updateOne({ email: emailToUpdate, otp: otpToUpdate }, {$set: {otp_status: 2} }, function (err, result) {
           if(err || result === null)
           {
             res.status(404).json({error: "Wrong OTP"}); 
           }else
           {
-          User.updateOne({ mobile_number: mobToUpdate}, {$set: { mob_verified: "1"} }, 
+          User.updateOne({ email: emailToUpdate}, {$set: { mob_verified: "1"} }, 
           function (err, result) {
              res.send((err === null) ? {message: "OTP Verified" } : {error: "Wrong OTP"});
-            
-            });
+          });
           }
        
         });

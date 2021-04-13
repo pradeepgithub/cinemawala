@@ -404,8 +404,8 @@ exports.listMovieRatingByUser = (req, res) => {
 exports.listMoviesSpecial = (req, res) => {
 
   //Note: We need to calculate tranding movie
-  const criteria = req.body.criteria;//? req.body.actors : "";
-  var number_movies = req.body.number_movies;//? req.body.festival: "";
+  const criteria = req.body.criteria? req.body.criteria : "";
+  var number_movies = req.body.number_movies? req.body.number_movies: "";
   if(number_movies == "")
   {
     number_movies=100;
@@ -413,7 +413,58 @@ exports.listMoviesSpecial = (req, res) => {
 
   if(criteria == "Recent")
   {
-  Movie.find({}).sort({$natural:-1}).limit(number_movies)
+    WatchedBy.aggregate(
+  [
+    {
+      '$lookup': {
+        'from': 'movies', 
+        'localField': 'title', 
+        'foreignField': 'title', 
+        'as': 'movies'
+      }
+    }, {
+      '$project': {
+        '_id':1,
+        'title': 1, 
+        'count': 1, 
+        'date_watched': 1, 
+        'movies': 1
+      }
+    }, {
+      '$group': {
+        '_id': {
+          '_id': '$_id',
+          'title': '$title', 
+          'date_watched': '$date_watched'
+        }, 
+        'count': {
+          '$sum': 1
+        }
+      }
+    }, {
+      '$project': {
+        '_id':1,
+        'title': 1, 
+        'count': 1, 
+        'date_watched': 1, 
+        'movies': 1
+      }
+    }, {
+      '$sort': {
+        'count': 1
+      }
+    },
+    {
+      '$project': {
+        '_id':'$_id._id',
+        'title':'$_id.title' , 
+       
+        'date_watched': '$_id.date_watched', 
+        
+      }
+    }
+  ])  
+  .sort({"date_watched":-1}).limit(number_movies)
     .then(data => {
       res.send(data);
     })
@@ -427,7 +478,58 @@ exports.listMoviesSpecial = (req, res) => {
   }
   else if(criteria == "Trending")
   {
-    Movie.find({}).sort({$natural:1}).limit(number_movies)
+    WatchedBy.aggregate(
+      [
+        {
+          '$lookup': {
+            'from': 'movies', 
+            'localField': 'title', 
+            'foreignField': 'title', 
+            'as': 'movies'
+          }
+        }, {
+          '$project': {
+            '_id':1,
+            'title': 1, 
+            'count': 1, 
+            'date_watched': 1, 
+            'movies': 1
+          }
+        }, {
+          '$group': {
+            '_id': {
+              '_id': '$_id',
+              'title': '$title', 
+              'date_watched': '$date_watched'
+            }, 
+            'count': {
+              '$sum': 1
+            }
+          }
+        }, {
+          '$project': {
+            '_id':1,
+            'title': 1, 
+            'count': 1, 
+            'date_watched': 1, 
+            'movies': 1
+          }
+        }, {
+          '$sort': {
+            'count': 1
+          }
+        },
+        {
+          '$project': {
+            '_id':'$_id._id',
+            'title':'$_id.title' , 
+           
+            'date_watched': '$_id.date_watched', 
+            
+          }
+        }
+    ])  
+    .sort({"date_watched":-1}).limit(number_movies)
     .then(data => {
       res.send(data);
     })
@@ -440,7 +542,60 @@ exports.listMoviesSpecial = (req, res) => {
     });
   }
   else{
-    Movie.aggregate([{ $sample: { size: number_movies } }])
+    // WatchedBy.aggregate([{ $sample: { size: number_movies } }])
+
+    WatchedBy.aggregate(
+      [
+        {
+          '$lookup': {
+            'from': 'movies', 
+            'localField': 'title', 
+            'foreignField': 'title', 
+            'as': 'movies'
+          }
+        }, {
+          '$project': {
+            '_id':1,
+            'title': 1, 
+            'count': 1, 
+            'date_watched': 1, 
+            'movies': 1
+          }
+        }, {
+          '$group': {
+            '_id': {
+              '_id': '$_id',
+              'title': '$title', 
+              'date_watched': '$date_watched'
+            }, 
+            'count': {
+              '$sum': 1
+            }
+          }
+        }, {
+          '$project': {
+            '_id':1,
+            'title': 1, 
+            'count': 1, 
+            'date_watched': 1, 
+            'movies': 1
+          }
+        }, {
+          '$sort': {
+            'count': 1
+          }
+        },
+        {
+          '$project': {
+            '_id':'$_id._id',
+            'title':'$_id.title' , 
+           
+            'date_watched': '$_id.date_watched', 
+            
+          }
+        }
+    ])  
+    .sort({"date_watched":-1}).limit(number_movies)
     .then(data => {
       res.send(data);
     })

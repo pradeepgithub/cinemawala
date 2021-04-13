@@ -44,6 +44,8 @@ module.exports = function(app) {
 
   app.post("/api/user/writetous",  [authJwt.verifyToken],  controller.writeToUs);
   app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
+  app.post("/api/user/showallwritetousbyid",  controller.showAllWriteToUsMessagesById);
+
   app.post("/api/user/reportproblem",  [authJwt.verifyToken], controller.reportAProblem);
   app.get("/api/user/showallreportproblems",  controller.showAllReportProblemsMessages);
   

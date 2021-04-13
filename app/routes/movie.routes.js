@@ -49,8 +49,10 @@ module.exports = function(app) {
   //Movie Listings
   app.post("/api/movie/toptrending", moviecontroller.listMoviesSpecial);
   app.post("/api/movie/alltrending", moviecontroller.listMoviesSpecial);
+
   app.post("/api/movie/toprecent", moviecontroller.listMoviesSpecial);
   app.post("/api/movie/allrecent", moviecontroller.listMoviesSpecial);
+  
   app.post("/api/movie/toprandom", moviecontroller.listMoviesSpecial);
   app.post("/api/movie/allrandom", moviecontroller.findAll);
 
