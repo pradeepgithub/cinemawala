@@ -9,25 +9,27 @@ const accountSid = config.accountSid;
 const authToken = config.authToken;
 const client = require('twilio')(accountSid, authToken)
 
+const multer = require('multer');
 let transport = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  //host: 'smtp.gmail.com',
   service: 'gmail', 
-  port: 465,
+  //port: 2525,
   auth: {
-    user: 'support@manythoughts.com',
-    pass: '100%Correct'
-    // user: 'digitalvimarsh@gmail.com',
-    // pass: 'Haihay@Vansh'
+     user: 'digitalvimarsh@gmail.com',
+     pass: 'tposipxjhfwtbhgw'
   }
 });
 
+
+
+
 exports.sendOTP = (req, res) => {
- // var valotp = Math.floor(1000 + Math.random() * 9000);
- var valotp = 1234;
+  var valotp = Math.floor(1000 + Math.random() * 9000);
+  //var valotp = 1234;
   var emailtoadd = req.body.email;
 
   const otps = new Otp({
-   email: 'pradeep.invite@gmail.com',
+   email: emailtoadd,
    otp:valotp,
    otp_status:1
 
@@ -49,7 +51,7 @@ exports.sendOTP = (req, res) => {
 
       } else {
   
-       var userToUpdate = req.body.email;
+       var userToUpdate = emailtoadd;
          Otp.updateOne({ email: userToUpdate }, {$set: {otp: valotp} }, function (err, result) {
           const message = {
             from: 'support@manythoughts.com', // Sender address
@@ -57,21 +59,23 @@ exports.sendOTP = (req, res) => {
             subject: 'OTP', // Subject line
             text: 'OTP:'+valotp // Plain text body
         };
-      client.messages.create({
-            body: 'Your OTP for account verification is this: '+valotp,
-            from: '+12517665750',
-            to: '+91'+'9926619949'
-          })
-          .then(message => console.log(message.sid))
-          .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while retrieving Users."
-          });
-          });
+      // client.messages.create({
+      //       body: 'Your OTP for account verification is this: '+valotp,
+      //       from: '+12517665750',
+      //       to: '+91'+'9926619949'
+      //     })
+      //     .then(message => console.log(message.sid))
+      //     .catch(err => {
+      //     res.status(500).send({
+      //       message:
+      //         err.message || "Some error occurred while retrieving Users."
+      //     });
+      //     });
 
+      console.log(message);
         transport.sendMail(message, function(err, info) {
-            if (err) {
+         
+          if (err) {
               console.log(err)
             } else {
               console.log('mail has sent.');
