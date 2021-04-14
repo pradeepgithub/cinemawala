@@ -72,18 +72,13 @@ exports.sendOTP = (req, res) => {
       //     });
       //     });
 
-      console.log(message);
         transport.sendMail(message, function(err, info) {
          
           if (err) {
               console.log(err)
-            } else {
-              console.log('mail has sent.');
-              console.log(info);
-            }
+            } 
         });
-
-          res.send({ message: valotp });
+     res.send({ message: valotp });
     });
   
      }
