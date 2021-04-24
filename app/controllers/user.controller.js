@@ -682,8 +682,7 @@ exports.uploadProfileImage = (req, res) =>{
   var file = req.file.originalname;
   console.log(file + " " + email);
   if(req.file) {
-      res.json(req.file);
-      
+      res.json(req.file);  
   }
   else throw 'error';
 

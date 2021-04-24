@@ -1073,7 +1073,9 @@ exports.listMyFevMovies = (req, res) => {
 exports.deleteMyFevMovies = (req, res) => {
 
   var fev_id =  req.body.fev_id
-  MyFev_Movie.deleteMany({_id: fev_id})
+  // MyFev_Movie.deleteMany({_id: fev_id})
+  MyFev_Movie.deleteMany({ '_id' : { $in : fev_id } }) 
+
   .then(data => {
       res.send(data);
     })
