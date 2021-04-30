@@ -1390,9 +1390,78 @@ exports.languageList = (req, res) => {
 "Welsh",
 
   ];
-  res.send(lang);
+  res.send({languages: lang});
 }  
 
+
+exports.festivalList = (req, res) => {
+
+  const festivals = [
+    "Berlin International Film Festival",
+    "Cairo International Film Festival",
+    "Festival de Cannes International",
+    "Film Festival of India (Goa)",
+    "Karlovy Vary International Film Festival", 
+    "Festival del film Locarno",
+    "Mar del Plata International Film Festival", 
+    "Montreal World Film Festival",
+    "Moscow International Film Festival", 
+    "San Sebastian International Film Festival",
+    "Shanghai International Film Festival", 
+    "Tallinn Black Nights Film Festival", 
+    "Tokyo International Film Festival", 
+    "Venice International Film Festival", 
+    "Warsaw Film Festival International",
+    "Antalya Film Festival", 
+    "Eurasia International Film Festival (Astana)", 
+    "Busan International Film Festival", 
+    "International Film Festival of Cartagena", 
+    "Transilvania International Film Festival",
+    "Cluj Noir in Festival (Como, Milan)", 
+    "Gijon International Film Festival", 
+    "Istanbul Film Festival FilmFestival Kitzbühel", 
+    "Kolkata International Film Festival", 
+    "Kyiv International Film Festival", 
+    "Molodist Motelx - Lisbon International Horror Film Festival", 
+    "Listapad Minsk International Film Festival", 
+    "Mumbai Film Festival", 
+    "Namur International Film Festival", 
+    "Festival de Cine Global Dominicano (Santo Domingo)",
+    "International Fantastic Film Festival of Catalonia",
+    "Cinedays (Skopje)",
+    "Sofia International Film Festival", 
+    "Stockholm International Film Festival", 
+    "Sydney Film Festival", 
+    "Torino Film Festival", 
+    "International Film Festival of Kerala (Trivandrum)", 
+    "Valencia International Film Festival, Cinema Jove",
+    "Toronto International Film Festival", 
+    "Viennale, Vienna International Film Festival",
+    "Zinebi, International Festival Bilbao", 
+    "Krakow Film Festival", 
+    "International Short Film Festival Oberhausen", 
+    "Message to Man International", 
+    "International Film Festival (St Petersburg)", 
+    "Tampere Film Festival",
+    "Annecy International Animated Film Festival",
+    "Animafest Zagreb",
+    "Ottawa International Animation Film Festival",
+    "Stuttgart Festival of Animated Film",
+    "Holland Animation Film Festival",
+    "Hiroshima",
+    "Anima Mundi",
+    "Fantoche",
+    "Animac",
+    "AnifilmTrebon",
+    "Sundance Film Festival",
+    "Cannes Film Festival", 
+    "Palm Springs International Festival of Short Films", 
+    "Clermont-Ferrand International Short Film Festival", 
+    "Aspen Shortsfest", 
+    
+  ];
+  res.send({festivals: festivals});
+}  
 exports.changeStatus = (req, res) => {
 
   const mid= req.body.id;
