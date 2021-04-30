@@ -25,7 +25,6 @@ let transport = nodemailer.createTransport({
 
 exports.sendOTP = (req, res) => {
   var valotp = Math.floor(1000 + Math.random() * 9000);
-  //var valotp = 1234;
   var emailtoadd = req.body.email;
 
   const otps = new Otp({
@@ -57,7 +56,7 @@ exports.sendOTP = (req, res) => {
             from: 'support@manythoughts.com', // Sender address
             to: userToUpdate,         // recipients
             subject: 'OTP', // Subject line
-            text: 'OTP:'+valotp // Plain text body
+            text: 'Your CinemaWalla App OTP is '+valotp // Plain text body
         };
       // client.messages.create({
       //       body: 'Your OTP for account verification is this: '+valotp,
