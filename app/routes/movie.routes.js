@@ -105,5 +105,7 @@ module.exports = function(app) {
   app.get("/api/movie/showmakerCount",  moviecontroller.showMakerCount);
   app.get("/api/movie/showmoviecount",  moviecontroller.showMovieCount);
   app.get("/api/movie/showwatcherCount",  moviecontroller.showWatcherCount);
+  app.get("/api/movie/getlanguages",  moviecontroller.languageList);
+  
 
 }
