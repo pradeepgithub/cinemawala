@@ -8,7 +8,7 @@ var corsOptions = {
   // origin: "http://localhost:3000"
   origin: "*"
 };
-
+app.use(express.static('public'));
 app.use(cors(corsOptions));
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
