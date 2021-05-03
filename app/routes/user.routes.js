@@ -3,7 +3,19 @@ const controller = require("../controllers/user.controller");
 const otpcontroller = require("../controllers/otp.controller");
 const multer = require('multer');
 const { exists } = require("../models/otp.model");
-const upload = multer({dest:'uploads/images'});
+// const upload = multer({dest:'uploads/images'});
+const path = require('path');
+const DIR = 'public/uploads/images';
+let storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+      callback(null, DIR);
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+ 
+let upload = multer({storage: storage});
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
