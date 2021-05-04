@@ -3,7 +3,20 @@ const controller = require("../controllers/user.controller");
 const moviecontroller = require("../controllers/movie.controller");
 
 const reportscontroller = require("../controllers/reports.controller");
-
+const multer = require('multer');
+const path = require('path');
+// const app = express();
+const DIR = 'public/uploads/images';
+let storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+      callback(null, DIR);
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+ 
+let upload = multer({storage: storage});
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -16,6 +29,8 @@ module.exports = function(app) {
 
 //[authJwt.verifyToken],
   //Movies 
+  app.post("/api/movie/upload_poster", upload.single('poster_image'), moviecontroller.uploadPoster);
+  
   app.post("/api/movie/save",  [authJwt.verifyToken], moviecontroller.saveMovie);
   app.post("/api/movie/addnewmovie",  [authJwt.verifyToken], moviecontroller.saveMovie);
   app.post("/api/movie/addpayments",  moviecontroller.addPayments);
@@ -78,6 +93,8 @@ module.exports = function(app) {
 
   //Fevourite Movie
   app.post("/api/movie/addfevmovie", [authJwt.verifyToken],  moviecontroller.addMyFebMovie);
+  app.post("/api/movie/addfevmoviemultiple", [authJwt.verifyToken],  moviecontroller.addMyFebMovieMultiple);
+
   app.post("/api/movie/listmyfevmovie", moviecontroller.listMyFevMovies);
   app.post("/api/movie/delmyfevmovie",[authJwt.verifyToken], moviecontroller.deleteMyFevMovies);
 

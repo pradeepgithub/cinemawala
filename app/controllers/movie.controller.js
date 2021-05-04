@@ -11,6 +11,7 @@ const WatchedBy = db.watched_by;
 const path = require('path');
 
 exports.findAll = (req, res) => {
+ 
     const movie_name = req.body.movie_name;
     var condition = movie_name ? { movie_name: { $regex: new RegExp(movie_name), $options: "i" } } : {};
     Movie.find()
@@ -24,6 +25,23 @@ exports.findAll = (req, res) => {
         });
       });
 };
+
+exports.uploadPoster = (req, res) => {
+  console.log("I am in");
+  var poster_image ="";
+  var message="";
+  if (!req.file) {
+      console.log("No file received");
+      message = "Error! in image upload."
+    } else {
+     console.log('file received' + req.file.filename);
+     poster_image = req.file.filename;
+      message = "Successfully! uploaded";
+    }
+    res.send({ poster_image });
+
+}
+
 
 exports.moviePreRoll = (req, res) =>{
   const country = req.body.country;
@@ -1092,19 +1110,37 @@ exports.deleteMyFevMovies = (req, res) => {
 exports.addMyFebMovie = (req, res) => {
 
   const MyFevMovie = new MyFev_Movie({
-    title: req.body.title,
+                  title: req.body.title,
                   user_id:  req.body.user_id,
                   movie_id: req.body.movie_id,
     
   });
-  MyFevMovie.save((err, MyFevMovie) => {
+    MyFevMovie.save((err, MyFevMovie) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
       res.status(200).send({ message: MyFevMovie });
       });
-  
+
+ 
+};
+
+
+exports.addMyFebMovieMultiple = (req, res) => {
+
+  var movieBag = [];
+  movieBag = req.body.doc;
+MyFev_Movie.insertMany(movieBag, onInsert);
+
+function onInsert(err, movieBag) {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    } 
+    res.status(200).send({ message: "Fevarite Movies Inserted" });
+}
+
 };
 
 exports.showAgree = (req, res) => {

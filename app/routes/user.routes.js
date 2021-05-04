@@ -26,7 +26,7 @@ module.exports = function(app) {
     next();
   });
 
-
+  
   app.post("/api/user/otp", otpcontroller.sendOTP);  
   app.post("/api/user/verifyotp", otpcontroller.verifyOTP);
   app.post("/api/user/changepassword", controller.changepassword);
