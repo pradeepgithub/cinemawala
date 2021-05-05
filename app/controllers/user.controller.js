@@ -89,9 +89,7 @@ exports.completeWatcherProfile = (req, res) => {
     pin= req.body.pin;
     country_name = req.body.country_name;
     fav_genre=req.body.fav_genre;
-    if(req.files)
-    {
-    profile_image=req.file.filename;
+    profile_image=req.body.profile_image;
     User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
       year_of_birth:year_of_birth, 
       mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
@@ -104,23 +102,6 @@ exports.completeWatcherProfile = (req, res) => {
             err.message || "Some error occurred while retrieving Users."
         });
       });
-    }
-    else{
-      profile_image="";
-      User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
-        year_of_birth:year_of_birth, 
-        mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-        fav_genre:fav_genre }}).then(data => {
-        res.send(data);
-        })
-        .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while retrieving Users."
-          });
-        });
-    }
-
 };
 
 exports.completeProfile = (req, res) => {
@@ -147,10 +128,7 @@ exports.completeProfile = (req, res) => {
   fav_genre=req.body.fav_genre;
   is_viewer_msg_blocked=req.body.is_viewer_msg_blocked;
   is_maker_msg_blocked=req.body.is_maker_msg_blocked;
-  if(req.files)
-
-  {
-  profile_image=req.file.filename;
+  profile_image=req.body.profile_image;
   User.updateOne({_id: user_id}, {$set: { profile_image:profile_image, first_name: first_name, last_name:last_name, country:country, email:email, 
     year_of_birth:year_of_birth, 
     mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
@@ -166,25 +144,7 @@ exports.completeProfile = (req, res) => {
           err.message || "Some error occurred while retrieving Users."
       });
     });
-  }
-  else{
-    profile_image="";
-    User.updateOne({_id: user_id}, {$set: { first_name: first_name, last_name:last_name, country:country, email:email, 
-      year_of_birth:year_of_birth, 
-      mobile_number:mobile_number, gender:gender, street:street, city:city, state:state, pin:pin, country_name:country_name,
-      fav_genre:fav_genre, film_school_name:film_school_name, film_course_name:film_course_name, film_school_year:film_school_year, film_school_country:film_school_country,
-      imdb_no:imdb_no, imdb_url:imdb_url, is_viewer_msg_blocked:is_viewer_msg_blocked, is_maker_msg_blocked:is_maker_msg_blocked  }}).then(data => {
-       
-      res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving Users."
-        });
-      });
-  }
-
+ 
 };
 
 exports.findAll = (req, res) => {
@@ -668,24 +628,17 @@ exports.showAllReportProblemsMessages = (req, res) => {
 
 exports.uploadProfileImage = (req, res) =>{
 
-//const upload = multer({dest:'uploads/'}).single("demo_image");
-
-// upload(req, res, (err) => {
-//   if(err) {
-//     res.status(400).send("Something went wrong!");
-//   }
-//   res.send(req.file);
-// });
-
-
-  var email = req.body.email;
-  var file = req.file.originalname;
-  console.log(file + " " + email);
-  if(req.file) {
-      res.json(req.file);  
-  }
-  else throw 'error';
-
+  var profile_image ="";
+  var message="";
+  if (!req.file) {
+      console.log("No file received");
+      message = "Error! in image upload."
+    } else {
+     console.log('file received' + req.file.filename);
+     profile_image = req.file.filename;
+      message = "Successfully! uploaded";
+    }
+    res.send({ profile_image });
 
 }
 

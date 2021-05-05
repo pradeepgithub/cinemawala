@@ -38,8 +38,10 @@ module.exports = function(app) {
   app.get("/api/user/listallmakers",  controller.findMakerAll);
   app.post("/api/user/listallwatchers",  controller.findMakerAll);
   app.post("/api/user/profile", [authJwt.verifyToken], controller.showProfile);
+  
+  app.post('/api/user/uploadprofileimage', upload.single('profile_image'), controller.uploadProfileImage);
+
   app.post("/api/user/updateprofile", [authJwt.verifyToken], controller.completeProfile);
-  app.post("/api/user/updateprofilewithimage", upload.single('profile_image'), controller.completeProfile);
   app.post("/api/user/updatewatcherprofile", [authJwt.verifyToken], controller.completeWatcherProfile);
   app.post("/api/user/profiles", controller.showProfile);
   app.post("/api/user/sendinvite", controller.sendFriendInvite);
@@ -63,7 +65,7 @@ module.exports = function(app) {
   
  // app.post("/api/user/uploadprofileimage",  controller.uploadProfileImage);
 
-  app.post('/api/user/uploadprofileimage', upload.single('demo_image'), controller.uploadProfileImage);
+
   app.get('/api/user/listcountries', controller.listCountries);
   app.post('/api/user/getcountrycialcode', controller.getCountryDialCode);
   app.post('/api/user/getcountryname', controller.getCountryName);
