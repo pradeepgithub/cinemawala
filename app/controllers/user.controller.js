@@ -530,16 +530,49 @@ exports.addReplyToSupport = (req, res) => {
 
 
 exports.showAllWriteToUsMessages = (req, res) => {
-  SupportWrite.find({$and:[{status:"New"},{type:{$ne:"Report a Problem"}}]})
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Users."
+  // SupportWrite.find({$and:[{status:"New"},{type:{$ne:"Report a Problem"}}]})
+  //   .then(data => {
+  //     res.send(data);
+  //   })
+  //   .catch(err => {
+  //     res.status(500).send({
+  //       message:
+  //         err.message || "Some error occurred while retrieving Users."
+  //     });
+  //   });
+  SupportWrite.aggregate([
+    { 
+     "$project": {
+               "user_id": { "$toObjectId": "$user_id"},
+               subject:1, 
+               type:1, 
+             
+     } 
+    },
+     { "$lookup": {
+       "from": "users",
+       "localField":  "user_id",
+       "foreignField": "_id",
+       "as": "users"
+     }},
+     {
+       "$project":{
+         subject:1,
+         type:1,
+         "users.first_name":1,
+         "users.last_name":1,
+         "users._id":1,
+   }
+     }
+   ]).then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Users."
+        });
       });
-    });
 };
 
 exports.showAllWriteToUsMessagesById = (req, res) => {
