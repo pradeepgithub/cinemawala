@@ -477,7 +477,8 @@ const supportwrite = new SupportWrite({
   subject: subj,
   message: msg,
   status: "New",
-  type:"Write to Us"
+  type:"Write to Us",
+  datemsg:'',
   
 });
 
@@ -486,6 +487,7 @@ const message = {
   to: 'pradeep.invite@gmail.com',         // recipients
   subject: subj, // Subject line
   text: msg // Plain text body
+
 };
 
 supportwrite.save((err, supportwrite) => {
@@ -505,6 +507,27 @@ supportwrite.save((err, supportwrite) => {
 
     });
 };
+
+exports.addReplyToSupport = (req, res) => {
+  SupportWrite.update({_id: req.body.message_id}, {"$push": {
+    "replies":{
+      "replied_user_id":req.body.replied_user_id,
+      "datereply":'',
+      "message":req.body.message,
+  }
+  }}, {multi: true})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log("Rrrr");
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while scheduling users."
+    });
+  });
+};
+
 
 exports.showAllWriteToUsMessages = (req, res) => {
   SupportWrite.find({$and:[{status:"New"},{type:{$ne:"Report a Problem"}}]})
@@ -526,10 +549,15 @@ exports.showAllWriteToUsMessagesById = (req, res) => {
   SupportWrite.aggregate([
   
    {$match: {"_id": mongoObjectId}},
-   { "$project": {
-    "user_id": { "$toObjectId": "$user_id"},message:1, subject:1, type:1 
+   { 
+    "$project": {
+              "user_id": { "$toObjectId": "$user_id"},
+              message:1, 
+              subject:1, 
+              type:1, 
+              replies:1,
     } 
-    },
+   },
     { "$lookup": {
       "from": "users",
       "localField":  "user_id",
@@ -540,6 +568,7 @@ exports.showAllWriteToUsMessagesById = (req, res) => {
       "$project":{
         subject:1,
         message:1,
+        replies:1,
         type:1,
         "users.first_name":1,
         "users.last_name":1,
@@ -550,16 +579,12 @@ exports.showAllWriteToUsMessagesById = (req, res) => {
         "users.state":1,
         "users.is_maker":1,
         "users._id":1,
-         
-      
   }
     }
-    
-
   ])
     .then(data => {
       res.send(data);
-      console.log(data);
+      //console.log(data);
     })
     .catch(err => {
       console.log(err);

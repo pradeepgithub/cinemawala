@@ -8,7 +8,15 @@ const SupportWrite = mongoose.model(
             subject:String,
             message: String,
             status: String,
-            type:String
+            type:String,
+            datemsg: String,
+
+            replies:
+            {
+            replied_user_id: String,
+            datereply:String,
+            message: String,
+           }
                      
         })
 );

@@ -57,6 +57,7 @@ module.exports = function(app) {
 
 
   app.post("/api/user/writetous",  [authJwt.verifyToken],  controller.writeToUs);
+  app.post("/api/user/writetousreply",  [authJwt.verifyToken],  controller.addReplyToSupport);
   app.get("/api/user/showallwritetous",  controller.showAllWriteToUsMessages);
   app.post("/api/user/showallwritetousbyid",  controller.showAllWriteToUsMessagesById);
 
